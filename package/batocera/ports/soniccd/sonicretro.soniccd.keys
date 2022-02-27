@@ -1,0 +1,9 @@
+{
+    "actions_player1": [
+	{
+            "trigger": ["hotkey", "start"],
+            "type": "exec",
+            "target": "killall -9 sonic2013; killall -9 soniccd"
+	}
+    ]
+}

@@ -1,0 +1,8 @@
+config BR2_PACKAGE_VULKAN_LOADER
+  bool "vulkan-loader"
+  depends on BR2_PACKAGE_VULKAN_HEADERS
+  depends on BR2_PACKAGE_WAYLAND
+  help
+    Vulkan Loader from Khronos
+
+    https://github.com/KhronosGroup/Vulkan-Loader

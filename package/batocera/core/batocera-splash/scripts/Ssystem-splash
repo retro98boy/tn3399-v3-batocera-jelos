@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# This is the BATOCERA system splash service
+# It shows the unique BATOCERA logo in early boot stage
+
+do_start ()
+{
+    image="/usr/share/batocera/splash/boot-logo-"$(batocera-resolution currentResolution)".png"
+    if ! [ -f "$image" ]; then
+        image="/usr/share/batocera/splash/boot-logo.png"
+        [ -f "$image" ] || exit 1
+    fi
+
+    # on some sytems, fb0 is not immediatly loaded, so, keep a chance by waiting a bit
+    N=0
+    while ! test -e /dev/fb0 -o $N -gt 80
+    do
+        sleep 0.25
+        N=$((N+1))
+    done
+    test -e /dev/fb0 && fbv -f -e -i "${image}"
+}
+
+case "$1" in
+    start)
+        do_start &
+        ;;
+    stop)
+        ;;
+    *)
+esac
+
+exit $?
