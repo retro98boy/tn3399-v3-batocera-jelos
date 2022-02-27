@@ -1,0 +1,115 @@
+#!/bin/sh
+
+do_help() {
+    echo "$0 scanlist" >&2
+    echo "$0 list" >&2
+}
+
+do_list() {
+    connmanctl services | sed 's/^...[ ]*//' | awk -F '[ ]*[ ]wifi_[[:alnum:]]*_' '{if (NF==2) print $1}' | sort -u # remove duplicates (a single wifi can appear under 2 interfaces)
+}
+
+do_scanlist() {
+    connmanctl scan wifi >/dev/null 2>/dev/null
+    do_list
+}
+
+do_enable() {
+    SSID=$1
+    PSK=$2
+
+    mkdir -p "/var/lib/connman" || return 1
+    cat > "/var/lib/connman/batocera_wifi.config" <<EOF
+[global]
+Name=batocera
+
+[service_batocera_default]
+Type=wifi
+Name=${SSID}
+EOF
+    if test "${PSK}" != ""
+    then
+	echo "Passphrase=${PSK}" >> "/var/lib/connman/batocera_wifi.config"
+    fi
+
+    connmanctl disable wifi
+    sleep 1
+
+    N=0
+    connmanctl state 2>/dev/null | grep -qE '^[ ]*State[ ]='
+    while test $? -ne 0 -a $N -lt 5 # 5 tries
+    do
+        N=$((N+1))
+        sleep 1
+        connmanctl state 2>/dev/null | grep -qE '^[ ]*State[ ]='
+    done
+
+    connmanctl enable wifi || return 1
+    connmanctl scan   wifi || return 1
+    return 0
+}
+
+do_disable() {
+    N=0
+    connmanctl state 2>/dev/null | grep -qE '^[ ]*State[ ]='
+    while test $? -ne 0 -a $N -lt 5 # 5 tries
+    do
+        N=$((N+1))
+        sleep 1
+        connmanctl state 2>/dev/null | grep -qE '^[ ]*State[ ]='
+    done
+    connmanctl disable wifi
+}
+
+do_start() {
+    settingsWlan="$(/usr/bin/batocera-settings-get wifi.enabled)"
+    if [ "$settingsWlan" != "1" ];then
+        return 0
+    fi
+
+    N=0
+    connmanctl state 2>/dev/null | grep -qE '^[ ]*State[ ]='
+    while test $? -ne 0 -a $N -lt 5 # 5 tries
+    do
+        N=$((N+1))
+        sleep 1
+        connmanctl state 2>/dev/null | grep -qE '^[ ]*State[ ]='
+    done
+
+    connmanctl enable wifi || return 1
+    connmanctl scan   wifi || return 1
+}
+
+
+if [ $# -eq 0 ]; then
+	do_help
+	exit 1
+fi
+
+ACTION=$1
+shift
+
+case "${ACTION}" in
+    "list")
+	do_list
+	;;
+    "scanlist")
+	do_scanlist
+	;;
+    "start")
+	do_start
+	;;
+    "enable")
+	SSID=$1
+	PSK=$2
+	do_enable "${SSID}" "${PSK}" || exit 1
+	;;
+    "disable")
+	do_disable || exit 1
+	;;
+	*)
+		do_help
+		>&2 echo "error: invalid command ${ACTION}"
+		exit 1
+esac
+exit 0

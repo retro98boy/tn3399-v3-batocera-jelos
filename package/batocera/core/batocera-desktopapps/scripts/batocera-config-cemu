@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if test -z "${DISPLAY}"
+then
+    export DISPLAY=:0.0
+fi
+
+python /usr/lib/python3.9/site-packages/configgen/emulatorlauncher.py -system wiiu -rom config
+
+exit 0

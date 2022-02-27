@@ -1,0 +1,98 @@
+default:
+  emulator:
+  core:
+  options:
+    hud_support: true
+    video_frame_delay_auto: true
+
+pcengine:
+  emulator: libretro
+  core:     pce
+pcenginecd:
+  emulator: libretro
+  core:     pce
+saturn:
+  emulator: libretro
+  core:     beetle-saturn
+n64:
+  options:
+    videomode: max-1920x1080
+n64dd:
+  options:
+    videomode: max-1920x1080
+sgb:
+  emulator: libretro
+  core:     mesen-s
+lcdgames:
+  emulator: mame
+  core:     mame
+cdi:
+  emulator: mame
+  core:     mame
+advision:
+  emulator: mame
+  core:     mame
+gamecube:
+  options:
+    ubershaders: asynchronous_ubershader
+    # causes issues on nvidia+dolphin
+    bezel: none
+wii:
+  options:
+    ubershaders: asynchronous_ubershader
+    # causes issues on nvidia+dolphin
+    bezel: none
+plugnplay:
+  emulator: mame
+  core:     mame
+megaduck:
+  emulator: mame
+  core:     mame
+pv1000:
+  emulator: mame
+  core:     mame
+gamate:
+  emulator: mame
+  core:     mame
+crvision:
+  emulator: mame
+  core:     mame
+gamecom:
+  emulator: mame
+  core:     mame
+fm7:
+  emulator: mame
+  core:     mame
+gamepock:
+  emulator: mame
+  core:     mame
+apfm1000:
+  emulator: mame
+  core:     mame
+bbc:
+  emulator: mame
+  core:     mame
+adam:
+  emulator: mame
+  core:     mame
+arcadia:
+  emulator: mame
+  core:     mame
+gmaster:
+  emulator: mame
+  core:     mame
+astrocde:
+  emulator: mame
+  core:     mame
+ti99:
+  emulator: mame
+  core:     mame
+tutor:
+  emulator: mame
+  core:     mame
+coco:
+  emulator: mame
+  core:     mame
+macintosh:
+  emulator: mame
+  core:     mame

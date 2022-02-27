@@ -1,0 +1,11 @@
+--- a/3rdparty/hidapi/hidapi/libusb/hid.c	2021-06-30 21:14:13.000000000 +0200
++++ b/3rdparty/hidapi/hidapi/libusb/hid.c	2021-08-01 19:15:08.124788582 +0200
+@@ -44,7 +44,7 @@
+ #include <wchar.h>
+ 
+ /* GNU / LibUSB */
+-#include <libusb.h>
++#include <libusb-1.0/libusb.h>
+ #if !defined(__ANDROID__) && !defined(NO_ICONV)
+ #include <iconv.h>
+ #endif

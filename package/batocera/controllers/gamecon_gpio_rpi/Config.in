@@ -1,0 +1,4 @@
+config BR2_PACKAGE_GAMECON_GPIO_RPI
+	bool "gamecon gpio driver"
+	help
+	  Kernel module to support snes,nes,psx joysticks on gpios

@@ -1,0 +1,10 @@
+config BR2_PACKAGE_DEVILUTIONX
+	bool "DevilutionX"
+	select BR2_PACKAGE_SDL2
+	select BR2_PACKAGE_SDL2_IMAGE
+	select BR2_PACKAGE_FMT
+	select BR2_PACKAGE_LIBSODIUM
+	help
+	  Diablo 1.
+
+	  https://github.com/diasurgical/devilutionX/

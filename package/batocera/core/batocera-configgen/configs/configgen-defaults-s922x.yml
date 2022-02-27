@@ -1,0 +1,13 @@
+gamecube:
+  emulator: dolphin
+  core:     dolphin
+  options:
+    platform: drm
+nds:
+  emulator: libretro
+  core:     melonds
+wii:
+  emulator: dolphin
+  core:     dolphin
+  options:
+    platform: drm
