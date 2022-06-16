@@ -13,177 +13,171 @@ sys.path.append(
 
 import batoceraFiles
 
-
-flycastMapping = { 'a' :             {'button': 'btn_b'},
-                   'b' :             {'button': 'btn_a'},
-                   'x' :             {'button': 'btn_y'},
-                   'y' :             {'button': 'btn_x'},
-                   'l1':             {'button': 'btn_c'},
-                   'r1':             {'button': 'btn_z'},
-                   'start' :         {'button': 'btn_start'},
-                   'pageup' :        {'axis': 'axis_trigger_left',  'button': 'btn_trigger_left'},
-                   'pagedown' :      {'axis': 'axis_trigger_right', 'button': 'btn_trigger_right'},
-                   'joystick1left' : {'axis': 'axis_x'},
-                   'joystick1up' :   {'axis': 'axis_y'},
-                   'joystick2left' : {'axis': 'axis_right_x'},
-                   'joystick2up' :   {'axis': 'axis_right_y'},
+flycastMapping = { # Directions
                    # The DPAD can be an axis (for gpio sticks for example) or a hat
-                   'left' :          {'hat': 'axis_dpad1_x', 'axis': 'axis_x', 'button': 'btn_dpad1_left'},
-                   'up' :            {'hat': 'axis_dpad1_y', 'axis': 'axis_y', 'button': 'btn_dpad1_up'},
-                   'right' :         {'button': 'btn_dpad1_right'},
-                   'down' :          {'button': 'btn_dpad1_down'},
-                   'r2' :            {'axis':  'axis_trigger_right', 'button': 'btn_trigger_right'},
-                   'l2' :            {'axis': 'axis_trigger_left', 'button': 'btn_trigger_left'}
+                   # We don't map DPad2
+                   'up' :            {'button': 'btn_dpad1_up', 'hat': 'btn_dpad1_up', 'axis': 'btn_dpad1_up'},
+                   'down' :          {'button': 'btn_dpad1_down', 'hat': 'btn_dpad1_down'},
+                   'left' :          {'button': 'btn_dpad1_left', 'hat': 'btn_dpad1_left', 'axis': 'btn_dpad1_left'},
+                   'right' :         {'button': 'btn_dpad1_right', 'hat': 'btn_dpad1_right'},
+                   'joystick1left' : {'axis': 'btn_analog_left'},
+                   'joystick1up' :   {'axis': 'btn_analog_up'},
+                   'joystick2left' : {'axis': 'axis2_left'},
+                   'joystick2up' :   {'axis': 'axis2_up'},
+                   # Buttons
+                   'b' :             {'button': 'btn_a'},
+                   'a' :             {'button': 'btn_b'},
+                   'y' :             {'button': 'btn_x'},
+                   'x' :             {'button': 'btn_y'},
+                   # Triggers
+                   'l2' :            {'axis': 'axis_trigger_left', 'button': 'btn_trigger_left'},
+                   'r2' :            {'axis': 'axis_trigger_right', 'button': 'btn_trigger_right'},
+                   # System Buttons
+                   'start' :         {'button': 'btn_start'}
 }
 
-# btn_d = coin
-flycastArcadeMapping = { 'a' :             {'button': 'btn_b'},
+flycastArcadeMapping = { # Directions
+                         'up' :            {'button': 'btn_dpad1_up', 'hat': 'btn_dpad1_up', 'axis': 'btn_dpad1_up'},
+                         'down' :          {'button': 'btn_dpad1_down', 'hat': 'btn_dpad1_down'},
+                         'left' :          {'button': 'btn_dpad1_left', 'hat': 'btn_dpad1_left', 'axis': 'btn_dpad1_left'},
+                         'right' :         {'button': 'btn_dpad1_right', 'hat': 'btn_dpad1_right'},
+                         'joystick1left' : {'axis': 'btn_analog_left'},
+                         'joystick1up' :   {'axis': 'btn_analog_up'},
+                         'joystick2left' : {'axis': 'axis2_left'},
+                         'joystick2up' :   {'axis': 'axis2_up'},
+                         # Buttons
                          'b' :             {'button': 'btn_a'},
-                         'x' :             {'button': 'btn_y'},
-                         'y' :             {'button': 'btn_x'},
-                         'select':         {'button': 'btn_d'},
-                         'l3':             {'button': 'btn_c'},
-                         'r3':             {'button': 'btn_z'},
+                         'a' :             {'button': 'btn_b'},
+                         'y':              {'button': 'btn_c'},
+                         'x' :             {'button': 'btn_x'},
+                         'pageup' :        {'button': 'btn_y'},
+                         'pagedown':       {'button': 'btn_z'},
+                         'l3':             {'button': 'btn_dpad2_left'},
+                         'r3':             {'button': 'btn_dpad2_right'},
+                         # Triggers
+                         'l2' :            {'axis': 'axis_trigger_left', 'button': 'btn_trigger_left'},
+                         'r2' :            {'axis': 'axis_trigger_right', 'button': 'btn_trigger_right'},
+                         # System Buttons
                          'start' :         {'button': 'btn_start'},
-                         'pageup' :        {'axis': 'axis_trigger_left',  'button': 'btn_trigger_left'},
-                         'pagedown' :      {'axis': 'axis_trigger_right', 'button': 'btn_trigger_right'},
-                         'joystick1left' : {'axis': 'axis_x'},
-                         'joystick1up' :   {'axis': 'axis_y'},
-                         'joystick2left' : {'axis': 'axis_right_x'},
-                         'joystick2up' :   {'axis': 'axis_right_y'},
-                         # The DPAD can be an axis (for gpio sticks for example) or a hat
-                         'left' :          {'hat': 'axis_dpad1_x', 'axis': 'axis_x', 'button': 'btn_dpad1_left'},
-                         'up' :            {'hat': 'axis_dpad1_y', 'axis': 'axis_y', 'button': 'btn_dpad1_up'},
-                         'right' :         {'button': 'btn_dpad1_right'},
-                         'down' :          {'button': 'btn_dpad1_down'},
-                         'r2' :            {'axis':  'axis_trigger_right', 'button': 'btn_trigger_right'},
-                         'l2' :            {'axis': 'axis_trigger_left', 'button': 'btn_trigger_left'}
+                         # coin
+                         'select':         {'button': 'btn_d'}
 }
 
-sections = { 'emulator' : ['mapping_name', 'btn_menu'],
-             'dreamcast' : ['btn_a', 'btn_b', 'btn_c', 'btn_z', 'btn_x', 'btn_y', 'btn_start', 'axis_x', 'axis_y', 'axis_trigger_left', 'axis_trigger_right', 'btn_dpad1_left', 'btn_dpad1_right', 'btn_dpad1_up', 'btn_dpad1_down', 'btn_dpad2_left', 'btn_dpad2_right', 'btn_dpad2_up', 'btn_dpad2_down'],
-             'compat' : ['axis_dpad1_x', 'axis_dpad1_y', 'btn_trigger_left', 'btn_trigger_right', 'axis_dpad2_x', 'axis_dpad2_y', 'axis_x_inverted', 'axis_y_inverted', 'axis_trigger_left_inverted', 'axis_trigger_right_inverted']
-
-}
-
-arcadesections = { 'emulator' : ['mapping_name', 'btn_menu'],
-             'dreamcast' : ['btn_a', 'btn_b', 'btn_c', 'btn_d', 'btn_z', 'btn_x', 'btn_y', 'btn_start', 'axis_x', 'axis_y', 'axis_trigger_left', 'axis_trigger_right', 'btn_dpad1_left', 'btn_dpad1_right', 'btn_dpad1_up', 'btn_dpad1_down', 'btn_dpad2_left', 'btn_dpad2_right', 'btn_dpad2_up', 'btn_dpad2_down'],
-             'compat' : ['axis_dpad1_x', 'axis_dpad1_y', 'btn_trigger_left', 'btn_trigger_right', 'axis_dpad2_x', 'axis_dpad2_y', 'axis_x_inverted', 'axis_y_inverted', 'axis_trigger_left_inverted', 'axis_trigger_right_inverted']
-
-}
+sections = { 'analog', 'digital', 'emulator' }
 
 # Create the controller configuration file
-# returns its name
-def generateControllerConfig(controller):
+def generateControllerConfig(controller, type):
     # Set config file name
-    configFileName = "{}/evdev_{}.cfg".format(batoceraFiles.flycastMapping,controller.realName)
+    if type == 'dreamcast':
+        configFileName = "{}/SDL_{}.cfg".format(batoceraFiles.flycastMapping, controller.realName)
+    if type == 'arcade':
+        configFileName = "{}/SDL_{}_arcade.cfg".format(batoceraFiles.flycastMapping, controller.realName)
     Config = configparser.ConfigParser(interpolation=None)
 
     if not os.path.exists(os.path.dirname(configFileName)):
         os.makedirs(os.path.dirname(configFileName))
          
     cfgfile = open(configFileName,'w+')
-    
     # create ini sections
     for section in sections:
         Config.add_section(section)
 
-    # Add controller name
-    Config.set("emulator", "mapping_name", controller.realName)
-    
-    l2_r2_flag = False
-    if 'r2' in controller.inputs:
-        l2_r2_flag = True
-
     # Parse controller inputs
+    analogbind = 0
+    digitalbind = 0
     for index in controller.inputs:
         input = controller.inputs[index]
-        
-        if input.name not in flycastMapping:
-            continue
-        if input.type not in flycastMapping[input.name]:
-            continue
-        var = flycastMapping[input.name][input.type]
-        eslog.debug("Var: {}".format(var))
-        for i in sections:
-            if var in sections[i]:
-                section = i
-                break
-
-        if l2_r2_flag and (input.name == 'pageup' or input.name == 'pagedown'):
-            continue
-
-        # batocera doesn't retrieve the code for hats, however, this is 16/17+input.id in linux/input.h
+        if type == 'dreamcast':
+            if input.name not in flycastMapping:
+                continue
+            if input.type not in flycastMapping[input.name]:
+                eslog.debug("Input type: {} / {} - not in mapping".format(input.type, input.name))
+                continue
+            var = flycastMapping[input.name][input.type]
+        if type == 'arcade':
+            if input.name not in flycastArcadeMapping:
+                continue
+            if input.type not in flycastArcadeMapping[input.name]:
+                eslog.debug("Input type: {} - not in mapping".format(input.type))
+                continue
+            var = flycastArcadeMapping[input.name][input.type]
+        eslog.debug("Input Name = {}, Var = {}, Type = {}".format(input.name, var, input.type))
+        # batocera doesn't retrieve the code for hats, however
+        # SDL is 256 for up, 257 for down, 258 for left & 259 for right
         if input.type == 'hat':
-            if input.name == 'up':  #Default values for hat0.  Formula for calculation is 16+input.id*2 and 17+input.id*2
-                code = 17 + 2*int(input.id) # ABS_HAT0Y=17
-            else:
-                code = 16 + 2*int(input.id) # ABS_HAT0X=16
-            Config.set(section, var, str(code))
-        else:
-            if input.code is not None:
-                code = input.code
-                Config.set(section, var, code)
-            else:
-                eslog.warning("code not found for key " + input.name + " on pad " + controller.realName + " (please reconfigure your pad)")
-
-    Config.write(cfgfile)
-    cfgfile.close()
-    return configFileName
-
-# atomiswave & naomi games expect an arcade cfg
-def generateArcadeControllerConfig(controller):
-    # Set config file name
-    configFileName = "{}/evdev_{}_arcade.cfg".format(batoceraFiles.flycastMapping,controller.realName)
-    Config = configparser.ConfigParser(interpolation=None)
-
-    if not os.path.exists(os.path.dirname(configFileName)):
-        os.makedirs(os.path.dirname(configFileName))
-         
-    cfgfile = open(configFileName,'w+')
-    
-    # create ini sections
-    for section in arcadesections:
-        Config.add_section(section)
-
-    # Add controller name
-    Config.set("emulator", "mapping_name", controller.realName)
-    
-    l2_r2_flag = False
-    if 'r2' in controller.inputs:
-        l2_r2_flag = True
-
-    # Parse controller inputs
-    for index in controller.inputs:
-        input = controller.inputs[index]
+            section = 'digital'
+            if input.name == 'up':
+                code = 256
+            if input.name == 'down':
+                code = 257
+            if input.name == 'left':
+                code = 258
+            if input.name == 'right':
+                code = 259
+            option = "bind{}".format(digitalbind)
+            digitalbind = digitalbind +1
+            val = "{}:{}".format(code, var)
+            Config.set(section, option, val)
         
-        if input.name not in flycastArcadeMapping:
-            continue
-        if input.type not in flycastArcadeMapping[input.name]:
-            continue
-        var = flycastArcadeMapping[input.name][input.type]
-        eslog.debug("Var: {}".format(var))
-        for i in sections:
-            if var in sections[i]:
-                section = i
-                break
-
-        if l2_r2_flag and (input.name == 'pageup' or input.name == 'pagedown'):
-            continue
-
-        # batocera doesn't retrieve the code for hats, however, this is 16/17+input.id in linux/input.h
-        if input.type == 'hat':
-            if input.name == 'up':  #Default values for hat0.  Formula for calculation is 16+input.id*2 and 17+input.id*2
-                code = 17 + 2*int(input.id) # ABS_HAT0Y=17
+        if input.type == 'button':
+            section = 'digital'
+            option = "bind{}".format(digitalbind)
+            digitalbind = digitalbind +1
+            code = input.id
+            val = "{}:{}".format(code, var)
+            Config.set(section, option, val)
+        
+        if input.type == 'axis':
+            section = 'analog'
+            code = input.id + "-"
+            option = "bind{}".format(analogbind)
+            analogbind = analogbind +1
+            val = "{}:{}".format(code, var)
+            if 'left' in input.name or 'up' in input.name:
+                Config.set(section, option, val)
+                # becase we only take one axis input
+                # now have to write the joy-right & joy-down manually
+                # we use the same code number but positive axis
+                option = "bind{}".format(analogbind)
+                analogbind = analogbind +1
+                if input.name == 'joystick1left':
+                    code = input.id + "+"
+                    var = 'btn_analog_right'
+                    val = "{}:{}".format(code, var)
+                    Config.set(section, option, val)
+                if input.name == 'joystick1up':
+                    code = input.id + "+"
+                    var = 'btn_analog_down'
+                    val = "{}:{}".format(code, var)
+                    Config.set(section, option, val)
+                if input.name == 'joystick2left':
+                    code = input.id + "+"
+                    var = 'axis2_right'
+                    val = "{}:{}".format(code, var)
+                    Config.set(section, option, val)
+                if input.name == 'joystick2up':
+                    code = input.id + "+"
+                    var = 'axis2_down'
+                    val = "{}:{}".format(code, var)
+                    Config.set(section, option, val)
+                if input.name == 'up':
+                    code = input.id + "+"
+                    var = 'btn_dpad1_down'
+                    val = "{}:{}".format(code, var)
+                    Config.set(section, option, val)
+                if input.name == 'left':
+                    code = input.id + "+"
+                    var = 'btn_dpad1_right'
+                    val = "{}:{}".format(code, var)
+                    Config.set(section, option, val)
             else:
-                code = 16 + 2*int(input.id) # ABS_HAT0X=16
-            Config.set(section, var, str(code))
-        else:
-            if input.code is not None:
-                code = input.code
-                Config.set(section, var, code)
-            else:
-                eslog.warning("code not found for key " + input.name + " on pad " + controller.realName + " (please reconfigure your pad)")
+                Config.set(section, option, val)
+
+    # Add additional controller info
+    Config.set("emulator", "dead_zone", "10")
+    Config.set("emulator", "mapping_name", "Default") #controller.realName)
+    Config.set("emulator", "rumble_power", "100")
+    Config.set("emulator", "version", "3")
 
     Config.write(cfgfile)
     cfgfile.close()

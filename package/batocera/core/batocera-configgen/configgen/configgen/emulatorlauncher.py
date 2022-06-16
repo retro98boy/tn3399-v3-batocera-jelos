@@ -17,6 +17,7 @@ from generators.mupen.mupenGenerator import MupenGenerator
 from generators.ppsspp.ppssppGenerator import PPSSPPGenerator
 from generators.flycast.flycastGenerator import FlycastGenerator
 from generators.dolphin.dolphinGenerator import DolphinGenerator
+from generators.dolphin_triforce.dolphinTriforceGenerator import DolphinTriforceGenerator
 from generators.pcsx2.pcsx2Generator import Pcsx2Generator
 from generators.scummvm.scummvmGenerator import ScummVMGenerator
 from generators.dosbox.dosboxGenerator import DosBoxGenerator
@@ -61,12 +62,16 @@ from generators.sonicretro.sonicretroGenerator import SonicRetroGenerator
 from generators.gsplus.gsplusGenerator import GSplusGenerator
 from generators.fba2x.fba2xGenerator import Fba2xGenerator
 from generators.yuzu.yuzuGenerator import YuzuGenerator
+from generators.ryujinx.ryujinxGenerator import RyujinxGenerator
 from generators.samcoupe.samcoupeGenerator import SamcoupeGenerator
 from generators.abuse.abuseGenerator import AbuseGenerator
 from generators.cdogs.cdogsGenerator import CdogsGenerator
 from generators.hcl.hclGenerator import HclGenerator
 from generators.openmsx.openmsxGenerator import OpenmsxGenerator
 from generators.demul.demulGenerator import DemulGenerator
+from generators.sh.shGenerator import ShGenerator
+from generators.xenia.xeniaGenerator import XeniaGenerator
+from generators.odcommander.odcommanderGenerator import OdcommanderGenerator
 #from generators.play.playGenerator import PlayGenerator
 
 import controllersConfig as controllers
@@ -95,6 +100,7 @@ generators = {
     'amiberry': AmiberryGenerator(),
     'flycast': FlycastGenerator(),
     'dolphin': DolphinGenerator(),
+    'dolphin_triforce': DolphinTriforceGenerator(),
     'pcsx2': Pcsx2Generator(),
     'ppsspp': PPSSPPGenerator(),
     'citra' : CitraGenerator(),
@@ -134,14 +140,20 @@ generators = {
     'gsplus': GSplusGenerator(),
     'fba2x': Fba2xGenerator(),
     'yuzu': YuzuGenerator(),
+    'ryujinx': RyujinxGenerator(),
     'samcoupe': SamcoupeGenerator(),
     'abuse': AbuseGenerator(),
     'cdogs': CdogsGenerator(),
     'hcl': HclGenerator(),
     'openmsx': OpenmsxGenerator(),
     'demul': DemulGenerator(),
+    'xenia': XeniaGenerator(),
+    'odcommander': OdcommanderGenerator(),
     #'play': PlayGenerator(),
+    'sh': ShGenerator(),
 }
+
+emulatorNoBezel = [ "sdlpop", "odcommander" ]
 
 def squashfs_begin(rom):
     eslog.debug("squashfs_begin({})".format(rom))
@@ -273,7 +285,7 @@ def start_rom(args, maxnbplayers, rom, romConfiguration):
         gameResolution = videoMode.getCurrentResolution()
 
         # if resolution is reversed (ie ogoa boards), reverse it in the gameResolution to have it correct
-        if system.isOptSet('resolutionIsReversed') and system.getOptBoolean('resolutionIsReversed') == True:
+        if videoMode.isResolutionReversed():
             x = gameResolution["width"]
             gameResolution["width"]  = gameResolution["height"]
             gameResolution["height"] = x
@@ -309,6 +321,8 @@ def start_rom(args, maxnbplayers, rom, romConfiguration):
             system.config["state_slot"] = args.state_slot
         if args.autosave is not None:
             system.config["autosave"] = args.autosave
+        if args.state_filename is not None:
+            system.config["state_filename"] = args.state_filename
 
         if generators[system.config['emulator']].getMouseMode(system.config):
             mouseChanged = True
@@ -373,7 +387,7 @@ def start_rom(args, maxnbplayers, rom, romConfiguration):
     return exitCode
 
 def getHudBezel(system, rom, gameResolution):
-    if 'bezel' not in system.config or system.config['bezel'] == "" or system.config['bezel'] == "none":
+    if 'bezel' not in system.config or system.config['bezel'] == "" or system.config['bezel'] == "none" or system.config['emulator'] in emulatorNoBezel:
         return None
 
     eslog.debug("hud enabled. trying to apply the bezel {}".format(system.config['bezel']))
@@ -383,7 +397,10 @@ def getHudBezel(system, rom, gameResolution):
         return None
 
     bezel = system.config['bezel']
-    bz_infos = bezelsUtil.getBezelInfos(rom, bezel, system.name)
+    if system.config['emulator'] == 'libretro':
+        bz_infos = bezelsUtil.getBezelInfos(rom, bezel, system.name, True)
+    else:
+        bz_infos = bezelsUtil.getBezelInfos(rom, bezel, system.name)
     if bz_infos is None:
         eslog.debug("no bezel info file found")
         return None
@@ -462,11 +479,16 @@ def getHudBezel(system, rom, gameResolution):
         return None
 
     # if screen and bezel sizes doesn't match, resize
+    # stretch option
+    if system.isOptSet('bezel_stretch') and system.getOptBoolean('bezel_stretch') == True:
+        bezel_stretch = True
+    else:
+        bezel_stretch = False
     if (bezel_width != gameResolution["width"] or bezel_height != gameResolution["height"]):
         eslog.debug("bezel needs to be resized")
         output_png_file = "/tmp/bezel.png"
         try:
-            bezelsUtil.resizeImage(overlay_png_file, output_png_file, gameResolution["width"], gameResolution["height"])
+            bezelsUtil.resizeImage(overlay_png_file, output_png_file, gameResolution["width"], gameResolution["height"], bezel_stretch)
         except Exception as e:
             eslog.error("failed to resize the image {}".format(e))
             return None
@@ -611,6 +633,7 @@ if __name__ == '__main__':
     parser.add_argument("-netplayip", help="remote ip", type=str, required=False)
     parser.add_argument("-netplayport", help="remote port", type=str, required=False)
     parser.add_argument("-state_slot", help="state slot", type=str, required=False)
+    parser.add_argument("-state_filename", help="state filename", type=str, required=False)
     parser.add_argument("-autosave", help="autosave", type=str, required=False)
     parser.add_argument("-systemname", help="system fancy name", type=str, required=False)
     parser.add_argument("-gameinfoxml", help="game info xml", type=str, nargs='?', default='/dev/null', required=False)

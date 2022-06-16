@@ -1,2 +1,0 @@
-config BR2_PACKAGE_TN3399_V3_BLOBS
-    bool "tn3399_v3-blobs"

@@ -26,10 +26,39 @@ def setMupenConfig(iniConfig, system, controllers, gameResolution):
     else:
         iniConfig.set("Core", "DisableExtraMem", "False")        # Disable 4MB expansion RAM pack. May be necessary for some games
 
-    # Disable AUDIO_SYNC while it causes issues
+    # Create section for Audio-SDL
     if not iniConfig.has_section("Audio-SDL"):
         iniConfig.add_section("Audio-SDL")
-    iniConfig.set("Audio-SDL", "AUDIO_SYNC", "False")
+
+    # Default to disable while it causes issues
+    if system.isOptSet("mupen64plus_AudioSync") and system.config["mupen64plus_AudioSync"] == 'True':
+        iniConfig.set("Audio-SDL", "AUDIO_SYNC", "True")
+    else:
+        iniConfig.set("Audio-SDL", "AUDIO_SYNC", "False")
+
+    # Audio buffer settings
+    # In the future, add for Audio-OMX too?
+    if system.isOptSet("mupen64plus_AudioBuffer"):
+        # Very High
+        if system.config["mupen64plus_AudioBuffer"] == "Very High":
+            iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_SIZE", "16384")
+            iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_TARGET", "4096")
+            iniConfig.set("Audio-SDL", "SECONDARY_BUFFER_SIZE", "2048")
+        # High (defaults provided by mupen64plus)
+        if system.config["mupen64plus_AudioBuffer"] == "High":
+            iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_SIZE", "16384")
+            iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_TARGET", "2048")
+            iniConfig.set("Audio-SDL", "SECONDARY_BUFFER_SIZE", "1024")
+        # Low
+        if system.config["mupen64plus_AudioBuffer"] == "Low":
+            iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_SIZE", "4096")
+            iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_TARGET", "1024")
+            iniConfig.set("Audio-SDL", "SECONDARY_BUFFER_SIZE", "512")
+    else:
+        # Medium
+        iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_SIZE", "8192")
+        iniConfig.set("Audio-SDL", "PRIMARY_BUFFER_TARGET", "2048")
+        iniConfig.set("Audio-SDL", "SECONDARY_BUFFER_SIZE", "1024")
 
     # Invert required when screen is rotated
     if gameResolution["width"] < gameResolution["height"]:
@@ -63,20 +92,21 @@ def setMupenConfig(iniConfig, system, controllers, gameResolution):
     iniConfig.set("Video-Glide64mk2", "Version", "1")
 
     # Widescreen Mode -> ONLY for GLIDE64 & MK2
-    if system.config["ratio"] == "16/9":
+    if (system.isOptSet("mupen64plus_ratio") and system.config["mupen64plus_ratio"] == "16/9") or (not system.isOptSet("mupen64plus_ratio") and system.isOptSet("ratio") and system.config["ratio"] == "16/9"):
         # Glide64mk2.: Adjust screen aspect for wide screen mode: -1=Game default, 0=disable. 1=enable
-        # Glide64mk2.: Aspect ratio: -1=Game default, 0=Force 4:3, 1=Force 16:9, 2=Stretch, 3=Original
         iniConfig.set("Video-Glide64mk2", "adjust_aspect", "1")
+        # Glide64mk2.: Aspect ratio: -1=Game default, 0=Force 4:3, 1=Force 16:9, 2=Stretch, 3=Original
         iniConfig.set("Video-Glide64mk2", "aspect", "1")
         # GLideN64.: Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
         iniConfig.set("Video-GLideN64",   "AspectRatio", "2")
-    elif system.config["ratio"] == "4/3":
+    elif (system.isOptSet("mupen64plus_ratio") and system.config["mupen64plus_ratio"] == "4/3") or (not system.isOptSet("mupen64plus_ratio") and system.isOptSet("ratio") and system.config["ratio"] == "4/3"):
+        # 4/3
         iniConfig.set("Video-Glide64mk2", "adjust_aspect", "0")
         iniConfig.set("Video-Glide64mk2", "aspect", "0")
         iniConfig.set("Video-GLideN64",   "AspectRatio", "1")
     else:
-        iniConfig.set("Video-Glide64mk2", "adjust_aspect", "1")
-        iniConfig.set("Video-Glide64mk2", "aspect", "2")
+        iniConfig.set("Video-Glide64mk2", "adjust_aspect", "-1")
+        iniConfig.set("Video-Glide64mk2", "aspect", "-1")
         iniConfig.set("Video-GLideN64",   "AspectRatio", "3")
 
     # Textures Mip-Mapping (Filtering)
@@ -139,6 +169,12 @@ def setMupenConfig(iniConfig, system, controllers, gameResolution):
             iniConfig.set("Video-Glide64mk2", "maxframeskip", system.config["mupen64plus_frameskip"])
     else:
         iniConfig.set("Video-Glide64mk2", "maxframeskip", "0")
+
+    # Read framebuffer always -> for GLIDE64MK2
+    if system.isOptSet("mupen64plus_fb_read_always") and system.config["mupen64plus_fb_read_always"] != "-1":
+        iniConfig.set("Video-Glide64mk2", "fb_read_always", system.config["mupen64plus_fb_read_always"])
+    else:
+        iniConfig.set("Video-Glide64mk2", "fb_read_always", "-1") # -1 = Game default
 
     # 64DD
     if not iniConfig.has_section("64DD"):

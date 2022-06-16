@@ -3,6 +3,7 @@ import sys
 import os
 import batoceraFiles
 from . import libretroOptions
+from . import libretroMAMEConfig
 from Emulator import Emulator
 import settings
 from settings.unixSettings import UnixSettings
@@ -31,11 +32,11 @@ ratioIndexes = ["4/3", "16/9", "16/10", "16/15", "21/9", "1/1", "2/1", "3/2", "3
 systemToBluemsx = {'msx': '"MSX2"', 'msx1': '"MSX2"', 'msx2': '"MSX2"', 'colecovision': '"COL - ColecoVision"' };
 
 # Define systems compatible with retroachievements
-systemToRetroachievements = {'atari2600', 'atari7800', 'jaguar', 'colecovision', 'nes', 'snes', 'virtualboy', 'n64', 'sg1000', 'mastersystem', 'megadrive', 'segacd', 'sega32x', 'saturn', 'pcengine', 'pcenginecd', 'supergrafx', 'psx', 'mame', 'fbneo', 'neogeo', 'lightgun', 'apple2', 'lynx', 'wswan', 'wswanc', 'gb', 'gbc', 'gba', 'sgb', 'nds', 'pokemini', 'gamegear', 'ngp', 'ngpc', 'supervision', 'sufami', 'pc88', 'pcfx', '3do', 'intellivision', 'odyssey2', 'vectrex', 'wonderswan', 'psp', 'snes-msu1', 'satellaview'};
+systemToRetroachievements = {'amstradcpc', 'atari2600', 'atari7800', 'jaguar', 'colecovision', 'dreamcast', 'atomiswave', 'naomi', 'nes', 'snes', 'virtualboy', 'n64', 'sg1000', 'mastersystem', 'megadrive', 'segacd', 'sega32x', 'saturn', 'pcengine', 'pcenginecd', 'supergrafx', 'psx', 'mame', 'fbneo', 'neogeo', 'lightgun', 'apple2', 'lynx', 'wswan', 'wswanc', 'gb', 'gbc', 'gba', 'sgb', 'nds', 'pokemini', 'gamegear', 'ngp', 'ngpc', 'supervision', 'sufami', 'pc88', 'pcfx', '3do', 'intellivision', 'odyssey2', 'vectrex', 'wonderswan', 'psp', 'snes-msu1', 'satellaview'};
 
 # Define Retroarch Core compatible with retroachievements
 # List taken from https://docs.libretro.com/guides/retroachievements/#cores-compatibility
-coreToRetroachievements = {'beetle-saturn', 'blastem', 'bluemsx', 'bsnes', 'bsnes_hd', 'desmume', 'duckstation', 'fbneo', 'fceumm', 'freeintv', 'gambatte', 'genesisplusgx', 'genesisplusgx-wide', 'handy', 'kronos', 'mednafen_lynx', 'mednafen_ngp', 'mednafen_psx', 'mednafen_supergrafx', 'mednafen_wswan', 'melonds', 'mesens', 'mgba', 'mupen64plus-next', 'nestopia', 'o2em', 'opera', 'parallel_n64', 'pce', 'pce_fast', 'pcfx', 'pcsx_rearmed', 'picodrive', 'pokemini', 'potator', 'ppsspp', 'prosystem', 'quasi88', 'snes9x', 'snes9x_next', 'stella', 'stella2014', 'swanstation', 'vb', 'vba-m', 'vecx', 'virtualjaguar'}
+coreToRetroachievements = {'beetle-saturn', 'blastem', 'bluemsx', 'bsnes', 'bsnes_hd', 'cap32', 'desmume', 'duckstation', 'fbneo', 'fceumm', 'flycast', 'freeintv', 'gambatte', 'genesisplusgx', 'genesisplusgx-wide', 'handy', 'kronos', 'mednafen_lynx', 'mednafen_ngp', 'mednafen_psx', 'mednafen_supergrafx', 'mednafen_wswan', 'melonds', 'mesen', 'mesens', 'mgba', 'mupen64plus-next', 'o2em', 'opera', 'parallel_n64', 'pce', 'pce_fast', 'pcfx', 'pcsx_rearmed', 'picodrive', 'pokemini', 'potator', 'ppsspp', 'prosystem', 'quasi88', 'snes9x', 'snes9x_next', 'stella', 'stella2014', 'swanstation', 'vb', 'vba-m', 'vecx', 'virtualjaguar'}
 
 # Define systems NOT compatible with rewind option
 systemNoRewind = {'sega32x', 'psx', 'zxspectrum', 'n64', 'dreamcast', 'atomiswave', 'naomi', 'saturn'};
@@ -84,13 +85,17 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
     if system.name == 'atarist':
         libretroOptions.generateHatariConf(batoceraFiles.hatariConf)
 
+    if system.config['core'] in [ 'mame', 'mess', 'mamevirtual' ]:
+        libretroMAMEConfig.generateMAMEConfigs(controllers, system, rom)
+
     retroarchConfig = dict()
     systemConfig = system.config
     renderConfig = system.renderconfig
 
     # Basic configuration
-    retroarchConfig['quit_press_twice'] = 'false'               # not aligned behavior on other emus
-    retroarchConfig['menu_show_restart_retroarch'] = 'false'    # this option messes everything up on Batocera if ever clicked
+    retroarchConfig['quit_press_twice'] = 'false'                 # not aligned behavior on other emus
+    retroarchConfig['menu_show_restart_retroarch'] = 'false'      # this option messes everything up on Batocera if ever clicked
+    retroarchConfig['menu_show_load_content_animation'] = 'false' # hide popup when starting a game
 
     retroarchConfig['video_driver'] = '"' + gfxBackend + '"'  # needed for the ozone menu
 
@@ -136,7 +141,14 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
 
     retroarchConfig['video_black_frame_insertion'] = 'false'    # don't use anymore this value while it doesn't allow the shaders to work
     retroarchConfig['pause_nonactive'] = 'false'                # required at least on x86 x86_64 otherwise, the game is paused at launch
-    retroarchConfig['cache_directory'] = '/userdata/system/.cache'
+
+    if not os.path.exists(batoceraFiles.CONF + '/retroarch/cache'):
+        os.makedirs(batoceraFiles.CONF + '/retroarch/cache')
+    retroarchConfig['cache_directory'] = batoceraFiles.CONF + '/retroarch/cache'
+
+    # require for core informations
+    retroarchConfig['libretro_directory'] = '/usr/lib/libretro'
+    retroarchConfig['libretro_info_path'] = '/usr/share/libretro/info'
 
     retroarchConfig['video_fullscreen'] = 'true'                # Fullscreen is required at least for x86* and odroidn2
 
@@ -152,6 +164,7 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
 
     # Input configuration
     retroarchConfig['input_joypad_driver'] = 'udev'
+    retroarchConfig['input_driver'] = 'udev'                    # driver for mouse/keyboard. udev required for guns.
     retroarchConfig['input_max_users'] = "16"                   # Allow up to 16 players
 
     retroarchConfig['input_libretro_device_p1'] = '1'           # Default devices choices
@@ -162,8 +175,9 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
         retroarchConfig['input_player1_analog_dpad_mode'] = '3'
         retroarchConfig['input_player2_analog_dpad_mode'] = '3'
 
-    # force notification messages
+    # force notification messages, but not the "remap" one
     retroarchConfig['video_font_enable'] = '"true"'
+    retroarchConfig['notification_show_remap_load'] = '"false"'
 
     # prevent displaying "QUICK MENU" with "No Items" after DOSBox Pure, TyrQuake and PrBoom games exit
     retroarchConfig['load_dummy_on_core_shutdown'] = '"false"'
@@ -350,7 +364,7 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
         # If set manually, proritize that.
         # Otherwise, set to portrait for games listed as 90 degrees, manual (default) if not.
         if not system.isOptSet('wswan_rotate_display'):
-            wswanGameRotation = videoMode.getGameSpecial(system.name, rom)
+            wswanGameRotation = videoMode.getGameSpecial(system.name, rom, True)
             if wswanGameRotation == "90":
                 wswanOrientation = "portrait"
             else:
@@ -395,7 +409,7 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
         if system.isOptSet('controller3_zxspec'):
             retroarchConfig['input_libretro_device_p3'] = system.config['controller3_zxspec']
         else:
-            retroarchConfig['input_libretro_device_p3'] = '0'
+            retroarchConfig['input_libretro_device_p3'] = '259'
 
     # Smooth option
     if system.isOptSet('smooth') and system.getOptBoolean('smooth') == True:
@@ -404,7 +418,7 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
         retroarchConfig['video_smooth'] = 'false'
 
     # Shader option
-    if 'shader' in renderConfig and renderConfig['shader'] != None:
+    if 'shader' in renderConfig and (renderConfig['shader'] != None and renderConfig['shader'] != "none"):
         retroarchConfig['video_shader_enable'] = 'true'
         retroarchConfig['video_smooth']        = 'false'     # seems to be necessary for weaker SBCs
     else:
@@ -484,6 +498,7 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
     retroarchConfig['cheevos_verbose_enable'] = 'false'
     retroarchConfig['cheevos_auto_screenshot'] = 'false'
     retroarchConfig['cheevos_challenge_indicators'] = 'false'
+    retroarchConfig['cheevos_start_active'] = 'false'
 
     if system.isOptSet('retroachievements') and system.getOptBoolean('retroachievements') == True:
         if(system.name in systemToRetroachievements) or (system.config['core'] in coreToRetroachievements) or (system.isOptSet('cheevos_force') and system.getOptBoolean('cheevos_force') == True):
@@ -516,6 +531,11 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution, gfxBac
                 retroarchConfig['cheevos_challenge_indicators'] = 'true'
             else:
                 retroarchConfig['cheevos_challenge_indicators'] = 'false'
+            # retroarchievements_encore_mode
+            if system.isOptSet('retroachievements.encore') and system.getOptBoolean('retroachievements.encore') == True:
+                retroarchConfig['cheevos_start_active'] = 'true'
+            else:
+                retroarchConfig['cheevos_start_active'] = 'false'
     else:
         retroarchConfig['cheevos_enable'] = 'false'
 
@@ -660,7 +680,7 @@ def writeBezelConfig(bezel, retroarchConfig, rom, gameResolution, system):
     if bezel is None:
         return
 
-    bz_infos = bezelsUtil.getBezelInfos(rom, bezel, system.name)
+    bz_infos = bezelsUtil.getBezelInfos(rom, bezel, system.name, True)
     if bz_infos is None:
         return
 
@@ -738,6 +758,7 @@ def writeBezelConfig(bezel, retroarchConfig, rom, gameResolution, system):
 
         # If width or height < original, can't add black borders, need to stretch
         if gameResolution["width"] < infos["width"] or gameResolution["height"] < infos["height"]:
+            eslog.debug("Screen resolution smaller than bezel: forcing stretch")
             bezel_stretch = True
 
         if bezel_game is True:
@@ -770,7 +791,7 @@ def writeBezelConfig(bezel, retroarchConfig, rom, gameResolution, system):
             # or up/down for 4K
             eslog.debug("Generating a new adapted bezel file {}".format(output_png_file))
             try:
-                bezelsUtil.padImage(overlay_png_file, output_png_file, gameResolution["width"], gameResolution["height"], infos["width"], infos["height"])
+                bezelsUtil.padImage(overlay_png_file, output_png_file, gameResolution["width"], gameResolution["height"], infos["width"], infos["height"], bezel_stretch)
             except Exception as e:
                 eslog.debug("Failed to create the adapated image: {}".format(e))
                 return

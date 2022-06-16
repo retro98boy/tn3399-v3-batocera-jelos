@@ -52,6 +52,8 @@ PACKAGES_LIBRETRO="	libretro-81
 					libretro-mame2003-plus
 					libretro-mame2010
 					libretro-melonds
+					libretro-mesen
+					libretro-mesen-s
 					libretro-mgba
 					libretro-mrboom
 					libretro-mupen64plus-next
@@ -74,6 +76,7 @@ PACKAGES_LIBRETRO="	libretro-81
 					libretro-px68k
 					libretro-retro8
 					libretro-scummvm
+					libretro-smsplus-gx
 					libretro-snes9x
 					libretro-snes9x-next
 					libretro-stella
@@ -92,8 +95,8 @@ PACKAGES_MUPEN="mupen64plus-audio-sdl
 				mupen64plus-core
 				mupen64plus-gliden64
 				mupen64plus-input-sdl
-				mupen64plus-rsphle
-				mupen64plus-uiconsole
+				mupen64plus-rsp-hle
+				mupen64plus-ui-console
 				mupen64plus-video-glide64mk2
 				mupen64plus-video-rice"
 

@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# batocera - downgrade from 2.10 (no -wired, no wifi on rk3326)
 WPA_SUPPLICANT_VERSION = 2.9
 WPA_SUPPLICANT_SITE = http://w1.fi/releases
 WPA_SUPPLICANT_PATCH = \
