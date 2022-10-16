@@ -1,0 +1,2 @@
+config BR2_PACKAGE_FIRMWARE_TN3399_V3
+	bool "firmware-tn3399_v3"
