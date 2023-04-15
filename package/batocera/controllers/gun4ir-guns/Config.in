@@ -1,5 +1,0 @@
-config BR2_PACKAGE_GUN4IR_GUNS
-	bool "gun4ir-guns"
-
-	help
-	  gun4ir guns support

@@ -1,6 +1,0 @@
-config BR2_PACKAGE_GUNCON
-	bool "guncon"
-	select BR2_PACKAGE_BATOCERA_GUN_CALIBRATOR
-
-	help
-	  guncon support

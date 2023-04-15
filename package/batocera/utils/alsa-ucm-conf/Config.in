@@ -1,6 +1,0 @@
-config BR2_PACKAGE_ALSA_UCM_CONF
-	bool "alsa-ucm-conf"
-	help
-	  ALSA Use Case Manager configuration.
-
-	  https://github.com/alsa-project/alsa-ucm-conf

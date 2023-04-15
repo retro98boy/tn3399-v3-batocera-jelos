@@ -1,7 +1,0 @@
-config BR2_PACKAGE_WINETRICKS
-	bool "WINETRICKS"
-	depends on BR2_PACKAGE_WINE_LUTRIS
-	help
-	  wine tricks
-
-	  https://github.com/Winetricks/winetricks

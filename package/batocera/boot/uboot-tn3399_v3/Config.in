@@ -1,4 +1,0 @@
-config BR2_PACKAGE_UBOOT_TN3399_V3
-        bool "uboot files for tn3399_v3"
-        help
-          uboot files for tn3399_v3

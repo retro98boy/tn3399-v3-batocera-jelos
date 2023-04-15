@@ -1,40 +1,48 @@
-[![Activity](https://img.shields.io/github/commit-activity/m/batocera-linux/batocera.linux)](https://github.com/batocera-linux/batocera.linux)
-[![PR](https://img.shields.io/github/issues-pr-closed/batocera-linux/batocera.linux)](https://github.com/batocera-linux/batocera.linux)
-[![Stars](https://img.shields.io/github/stars/batocera-linux?style=social)](https://github.com/batocera-linux/batocera.linux)
-[![Forks](https://img.shields.io/github/forks/batocera-linux/batocera.linux?style=social)](https://github.com/batocera-linux/batocera.linux)
-[![Website](https://img.shields.io/website?down_color=red&down_message=down&up_color=green&up_message=up&url=https%3A%2F%2Fwww.batocera.org)](https://www.batocera.org)
-[![Discord Server](https://img.shields.io/discord/357518249883205632.svg)](https://discord.com/invite/JXhfRTr)\
-[![Reddit](https://img.shields.io/reddit/subreddit-subscribers/batocera?style=social)](https://www.reddit.com/r/batocera/)
-[![Twitter](https://img.shields.io/twitter/follow/batocera_linux?style=social)](https://twitter.com/batocera_linux/)
-[![Youtube](https://img.shields.io/youtube/channel/views/UClFpqHKoXsOIV-GjyZqoZcw?style=social)](https://www.youtube.com/channel/UClFpqHKoXsOIV-GjyZqoZcw/featured)
+# batocera是什么
 
-## :video_game::penguin: Batocera Linux :video_game::penguin:
-Batocera Linux is an open-source and completely free retro-gaming distribution that can be copied to a USB stick or an SD card with the aim of turning any computer/nano computer into a gaming console during a game or permanently. Batocera Linux does not require any modification on your computer. It supports [many emulators and game engines](https://www.batocera.org/compatibility.php) out of the box. 
+batocera是一个模拟器游戏系统，使用Linux内核，rootfs采用buildroot构建。项目[地址](https://github.com/batocera-linux/batocera.linux)
 
-## Get information on the project
+batocera集成了各种模拟器，例如RetroArch，PPSSPP等。并且带有EmulationStation模拟器游戏前端，使打开游戏从执行命令变成操作手柄/键盘
 
- - :globe_with_meridians: Browse our [website](https://batocera.org/) for general information and get access to all the latest downloads
- - :memo: Documentation is available on our [wiki](https://wiki.batocera.org/doku.php) and frequently updated
- - :speech_balloon: Discuss any topic with the community on our [Discord Server](https://discord.gg/ndyUKA5)
+官方系统只带几个示例游戏的ROM，需要玩家自己导入外部ROM
 
-## Do you need help with Batocera?
+# 本仓库作用
 
- - :sos: The most effective way is to join our [Discord Server](https://discord.gg/ndyUKA5) and go to the \#support-help channel
- - :neckbeard: There is a [Batocera subreddit](https://www.reddit.com/r/batocera/) that is fairly active
- - :bowtie: Finally, we also have a [forum](https://forum.batocera.org/public/) 
+为TN3399_V3移植batocera系统，因为官方本来就支持RK3399的一些SBC，所以移植到TN3399_V3上很简单。仓库提供的patch给官方的源码添加TN3399_V3的支持
 
-## How can you help Batocera?
+# 编译
 
- - :wrench: If you want to help with development, [we accept PRs](https://makeapullrequest.com/) -- anyone is welcome, we embrace the [Bazaar development principles](https://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar)
- - :art: No need to be a developer, you can also [help with translations](https://wiki.batocera.org/help_with_translation), talk about our project on [Youtube](https://www.youtube.com/channel/UClFpqHKoXsOIV-GjyZqoZcw/featured) or [Twitter](https://twitter.com/batocera_linux/), create [themes for EmulationStation](https://wiki.batocera.org/themes)
- - :dollar: Finally, you can help us with a [Paypal donation](https://www.paypal.com/paypalme/nadenislamarre), it's always appreciated!
+编译非常耗时，本人I9 13900HX的笔记本也花了好几个小时。同时会从外网下载大约17GiB的源码，对网络要求比较高，且有时软件的来源会被删除导致下载会失败
 
-## Directory navigation
+[这里](https://pan.baidu.com/s/1SVf2VJm_b2v6fLpdQpce8w?pwd=zdxa)有打包的所有源码，包括编译时下载的额外源码，感兴趣的话可以自行下载编译。提取码为zdxa
 
- - `board` Platform-specific build configuration. This is where to include special patches/configuration files needed to have particular components work on a particular platform. It is instead encouraged to apply patches at the location of the package itself, but this may not always be possible.
- - `buildroot` Buildroot, the tool used to create the final compiled images. For newcomers, you can safely ignore this folder. Compilation instructions can be found [on the wiki](https://wiki.batocera.org/compile_batocera.linux).
- - `configs` Build flags, which define what components will be built with your image depending on your chose architecture. If you're trying to port Batocera to a new architecture (device, platform, new bit mode, etc.) this is the file you'll need to edit. More information on [the build configuration section on the buildroot compiling page](https://wiki.batocera.org/batocera.linux_buildroot_modifications#define_your_configuration).
- - `package` The "meat and potatoes" of Batocera. This is where the majority of emulator data, config generators, core packages, system utilities, etc. all go into. This is the friendliest place to start dev-work for new devs, as most of it is handled by Python and Makefile.
- - `scripts` Various miscellanous scripts that handle aspects external to Batocera, such as the report data sent to the [compatibility page](https://batocera.org/compatibility.php) or info about the Bezel Project.
+## 编译步骤
 
-A cheatsheet of notable files/folders can be found [on the wiki](https://wiki.batocera.org/notable_files).
+官方提供了基于Dokcer的编译方法，所以不需要去搭建环境，可以使用任何Linux发行版搭配Docker
+
+- 解压源码
+  
+  ```
+  tar zxvf batocera.linux-36.tar.gz -C ~/Desktop
+  cat dl.tar.gz.* | tar zxv -C ~/Desktop/batocera.linux
+  ```
+
+- 将patch复制到batocera.linux目录里，cd进入其中，打上补丁
+  
+  ```
+  patch -p1 < batocera_36_add_tn3399_v3.patch
+  ```
+
+- 为RK3399平台SBC编译系统
+  
+  ```
+  make rk3399-build
+  ```
+
+目标镜像在batocera.linux/output/images/batocera/images/<architecture>/batocera-<XXXX>.img.gz
+
+# Bug？
+
+当前36版本的batocera必须插键盘才能进到操作界面，不插外设或插USB手柄不行。拿出Rock Pi 4A的板子刷入对应的固件发现也一样。编译还在开发中的37再尝试，也是一样。所以这是特性？检测键盘便于后续操作？
+
+编译一次花费大量的时间、网络流量和磁盘空间，所以后续的版本可能采取在官方预编译固件，例如RockPro64上修改dtb的办法来移植

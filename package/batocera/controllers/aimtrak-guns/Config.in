@@ -1,6 +1,0 @@
-config BR2_PACKAGE_AIMTRAK_GUNS
-	bool "aimtrak-guns"
-	select BR2_PACKAGE_EVSIEVE
-
-	help
-	  aimtrak guns support

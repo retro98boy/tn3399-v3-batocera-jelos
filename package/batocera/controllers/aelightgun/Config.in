@@ -1,6 +1,0 @@
-config BR2_PACKAGE_AELIGHTGUN
-	bool "aelightgun"
-	select BR2_PACKAGE_EVSIEVE
-
-	help
-	  aelightgun support

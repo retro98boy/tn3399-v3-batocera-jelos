@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LIBENET
-	bool "libenet"
-	help
-	  network communication layer on top of UDP
-
-	  http://enet.bespin.org
