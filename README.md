@@ -39,7 +39,7 @@ batocera集成了各种模拟器，例如RetroArch，PPSSPP等。并且带有Emu
   make rk3399-build
   ```
 
-目标镜像在batocera.linux/output/images/batocera/images/<architecture>/batocera-<XXXX>.img.gz
+目标镜像在batocera.linux/output/rk3399/images/batocera/images/tn3399_v3
 
 # Bug？
 
