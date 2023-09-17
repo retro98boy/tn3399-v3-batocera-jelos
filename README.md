@@ -71,8 +71,8 @@ JELOS集成了RetroArch和一些独立模拟器如PPSSPP，并且带有Emulation
 cd Desktop
 git clone https://github.com/JustEnoughLinuxOS/distribution.git
 cd distribution
-# 切换到20230909版本
-git checkout e43e80dc
+# 切换到20230915版本
+git checkout eaa4ffd
 ```
 
 ### 打补丁
@@ -80,7 +80,7 @@ git checkout e43e80dc
 将patch复制到distribution目录里，cd进入其中，打上补丁：
 
 ```
-patch -p1 < jelos-20230909-add-tn3399_v3.patch
+patch -p1 < jelos-20230915-add-tn3399_v3.patch
 ```
 
 ### 编译
@@ -103,4 +103,4 @@ rm -rf sources/报错的包名
 
 PS：
 
-有时编译出来的镜像刻录后到TN3399_V3上后，开机后内核会卡住，屏幕坐上角的光标一直闪，尝试`CLEAN_PACKAGES="linux" make RK3399`重新编译试试，比较玄学
+- 有时编译出来的镜像刻录后到TN3399_V3上后，开机后内核会卡住，屏幕坐上角的光标一直闪，尝试`CLEAN_PACKAGES="linux" make RK3399`重新编译试试，比较玄学
