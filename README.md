@@ -18,14 +18,14 @@ PS:
 
 编译非常耗时，亲测I9 13900HX也要好几个小时。会从外网下载大约18GiB的源码，且有时软件的来源会被删除导致下载会失败。编译完后整个工程目录占122GiB左右
 
-[这里](https://pan.baidu.com/s/1SVf2VJm_b2v6fLpdQpce8w?pwd=zdxa)有打包的所有源码，感兴趣的话可以自行下载编译。提取码为zdxa
+[这里](https://pan.baidu.com/s/1vD1iyD0hk2TpH0c3WGPV-w?pwd=elp1)有打包的所有源码，感兴趣的话可以自行下载编译。提取码为elp1
 
 官方提供了基于Dokcer的编译方法，方便在任何Linux发行版上编译，步骤如下
 
 ### 解压源码
   
 ```
-tar zxvf batocera.linux-37.tar.gz -C ~/Desktop
+tar zxvf batocera.linux.tar.gz -C ~/Desktop
 cat dl.tar.gz.* | tar zxv -C ~/Desktop/batocera.linux
 ```
 
@@ -34,7 +34,7 @@ cat dl.tar.gz.* | tar zxv -C ~/Desktop/batocera.linux
 将patch复制到batocera.linux目录里，cd进入其中，打上补丁：
 
 ```
-patch -p1 < batocera-37-add-tn3399_v3.patch
+patch -p1 < batocera-38-add-tn3399-v3.patch
 ```
 
 ### 编译
@@ -44,12 +44,6 @@ make rk3399-build
 ```
 
 目标镜像在batocera.linux/output/rk3399/images/batocera/images/tn3399-v3
-
-PS：
-
-- 自从36版本起，RK3399平台的Batocera存在需要插上键盘才能进到EmulationStation界面的Bug，暂时无法解决
-
-- 37版本存在开机后HDMI一直黑屏的Bug，需要手动插拔一次HDMI，屏幕正常显示后，打开设置界面，将`system settings` -> `splash setting`设置成`batocera splash image`重启即可
 
 # JELOS
 
@@ -101,6 +95,4 @@ rm -rf sources/报错的包名
 
 单独的包编译成功后，接着继续执行`make RK3399`编译即可
 
-PS：
-
-- 有时编译出来的镜像刻录后到TN3399_V3上后，开机后内核会卡住，屏幕坐上角的光标一直闪，尝试`CLEAN_PACKAGES="linux" make RK3399`重新编译试试，比较玄学
+PS：有时编译出来的镜像刻录后到TN3399_V3上后，开机后内核会卡住，屏幕坐上角的光标一直闪，尝试`CLEAN_PACKAGES="linux" make RK3399`重新编译试试，比较玄学
