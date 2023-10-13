@@ -10,9 +10,7 @@ Batocera是一个基于Linux的开源模拟器游戏系统，rootfs采用Buildro
 
 Batocera集成了RetroArch和一些独立模拟器如PPSSPP，并且带有EmulationStation模拟器前端，使打开游戏从执行命令变成操作手柄/键盘。同时Batocera还附带Kodi媒体播放器
 
-PS:
-
-- Batocera镜像只附带几个示例游戏ROM，需要玩家自己导入外部ROM
+PS：Batocera镜像只附带几个示例游戏ROM，需要玩家自己导入外部ROM
 
 ## 如何编译
 
@@ -65,8 +63,8 @@ JELOS集成了RetroArch和一些独立模拟器如PPSSPP，并且带有Emulation
 cd Desktop
 git clone https://github.com/JustEnoughLinuxOS/distribution.git
 cd distribution
-# 切换到20230915版本
-git checkout eaa4ffd
+# 切换到20231012版本
+git checkout 1e4ba135
 ```
 
 ### 打补丁
@@ -74,12 +72,12 @@ git checkout eaa4ffd
 将patch复制到distribution目录里，cd进入其中，打上补丁：
 
 ```
-patch -p1 < jelos-20230915-add-tn3399_v3.patch
+patch -p1 < jelos-20231012-add-tn3399-v3.patch
 ```
 
 ### 编译
 
-理论上执行`make docker-RK3399`即可完成编译，但是在编译过程中大概率会出错，所以推荐基于Docker手动编译
+理论上执行`make docker-RK3399`即可完成编译，但是在编译过程中有概率会出错，所以推荐基于Docker手动编译
 
 执行`make docker-shell`进入编译环境的shell，然后执行`make RK3399`编译，如果有错误（几乎都是包源码下载失败导致）导致停止编译，查看报错信息得知是哪一个包编译出错，单独编译：
 
@@ -94,5 +92,3 @@ rm -rf sources/报错的包名
 ```
 
 单独的包编译成功后，接着继续执行`make RK3399`编译即可
-
-PS：有时编译出来的镜像刻录后到TN3399_V3上后，开机后内核会卡住，屏幕坐上角的光标一直闪，尝试`CLEAN_PACKAGES="linux" make RK3399`重新编译试试，比较玄学

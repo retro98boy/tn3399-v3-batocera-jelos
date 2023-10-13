@@ -1,43 +1,155 @@
-diff --git a/packages/hardware/quirks/devices/TN3399_V3 Board/010-speaker b/packages/hardware/quirks/devices/TN3399_V3 Board/010-speaker
+diff --git a/packages/audio/alsa-ucm-conf/patches/001-add-rockchip-rt5640.patch b/packages/audio/alsa-ucm-conf/patches/001-add-rockchip-rt5640.patch
 new file mode 100644
-index 00000000..d6fbcee6
+index 00000000..0a3c93d4
 --- /dev/null
-+++ b/packages/hardware/quirks/devices/TN3399_V3 Board/010-speaker	
-@@ -0,0 +1,9 @@
-+#!/bin/sh
++++ b/packages/audio/alsa-ucm-conf/patches/001-add-rockchip-rt5640.patch
+@@ -0,0 +1,120 @@
++diff --git a/ucm2/conf.d/simple-card/rockchip,rt5640-codec-HiFi.conf b/ucm2/conf.d/simple-card/rockchip,rt5640-codec-HiFi.conf
++new file mode 100644
++index 0000000..45dffb5
++--- /dev/null
+++++ b/ucm2/conf.d/simple-card/rockchip,rt5640-codec-HiFi.conf
++@@ -0,0 +1,90 @@
+++SectionVerb {
+++	Value {
+++		TQ HiFi
+++		PlaybackChannels 2
+++		CaptureChannels 2
+++	}
+++
+++	EnableSequence [
+++		# for speaker and headphones
+++		cset "name='Stereo DAC MIXL DAC L1 Switch' on"
+++		cset "name='Stereo DAC MIXR DAC R1 Switch' on"
+++	]
+++}
+++
+++SectionDevice."Speaker" {
+++	Comment "Internal Speakers"
+++
+++	ConflictingDevice [
+++		"Headphones"
+++	]
+++
+++	Value {
+++		PlaybackPriority 200
+++		PlaybackPCM "hw:${CardId},0"
+++	}
+++
+++	EnableSequence [
+++		cset "name='SPOL MIX DAC L1 Switch' on"
+++		cset "name='SPOR MIX DAC R1 Switch' on"
+++		cset "name='Speaker L Playback Switch' on"
+++		cset "name='Speaker R Playback Switch' on"
+++	]
+++
+++	DisableSequence [
+++		cset "name='Speaker L Playback Switch' off"
+++		cset "name='Speaker R Playback Switch' off"
+++		cset "name='SPOL MIX DAC L1 Switch' off"
+++		cset "name='SPOR MIX DAC R1 Switch' off"
+++	]
+++}
+++
+++SectionDevice."Headphones" {
+++	Comment "Headphones"
+++
+++	ConflictingDevice [
+++		"Speaker"
+++	]
+++
+++	Value {
+++		PlaybackPriority 100
+++		PlaybackPCM "hw:${CardId},0"
+++		JackControl "Headphone Jack"
+++		JackHWMute "Speaker"
+++	}
+++
+++	EnableSequence [
+++		cset "name='HPO MIX DAC1 Switch' on"
+++		cset "name='HP L Playback Switch' on"
+++		cset "name='HP R Playback Switch' on"
+++	]
+++
+++	DisableSequence [
+++		cset "name='HP L Playback Switch' off"
+++		cset "name='HP R Playback Switch' off"
+++		cset "name='HPO MIX DAC1 Switch' off"
+++	]
+++}
+++
+++SectionDevice."Mic" {
+++	Comment "Internal Microphone"
+++
+++	Value {
+++		CapturePriority 100
+++		CapturePCM "hw:${CardId},0"
+++	}
+++
+++	EnableSequence [
+++		cset "name='RECMIXL BST1 Switch' on"
+++		cset "name='RECMIXR BST1 Switch' on"
+++		cset "name='Stereo ADC MIXL ADC1 Switch' on"
+++		cset "name='Stereo ADC MIXR ADC1 Switch' on"
+++	]
+++
+++	DisableSequence [
+++		cset "name='Stereo ADC MIXL ADC1 Switch' off"
+++		cset "name='Stereo ADC MIXR ADC1 Switch' off"
+++		cset "name='RECMIXL BST1 Switch' off"
+++		cset "name='RECMIXR BST1 Switch' off"
+++	]
+++}
++diff --git a/ucm2/conf.d/simple-card/rockchip,rt5640-codec.conf b/ucm2/conf.d/simple-card/rockchip,rt5640-codec.conf
++new file mode 100644
++index 0000000..1a3e0b9
++--- /dev/null
+++++ b/ucm2/conf.d/simple-card/rockchip,rt5640-codec.conf
++@@ -0,0 +1,18 @@
+++Syntax 4
+++
+++Comment "Rockchip ALC5640 card"
+++
+++SectionUseCase."HiFi" {
+++	File "rockchip,rt5640-codec-HiFi.conf"
+++	Comment "Default"
+++}
+++
+++BootSequence [
+++	# speaker default
+++	cset "name='Stereo DAC MIXL DAC L1 Switch' on"
+++	cset "name='Stereo DAC MIXR DAC R1 Switch' on"
+++	cset "name='SPOL MIX DAC L1 Switch' on"
+++	cset "name='SPOR MIX DAC R1 Switch' on"
+++	cset "name='Speaker L Playback Switch' on"
+++	cset "name='Speaker R Playback Switch' on"
+++]
+diff --git a/packages/kernel/linux-firmware/brcmfmac_sdio-firmware/scripts/brcmfmac-firmware-setup b/packages/kernel/linux-firmware/brcmfmac_sdio-firmware/scripts/brcmfmac-firmware-setup
+index 7754cd86..3ba19518 100755
+--- a/packages/kernel/linux-firmware/brcmfmac_sdio-firmware/scripts/brcmfmac-firmware-setup
++++ b/packages/kernel/linux-firmware/brcmfmac_sdio-firmware/scripts/brcmfmac-firmware-setup
+@@ -10,3 +10,8 @@ if [ "$DTNAME" = "khadas,vim" -o "$DTNAME" = "xunlong,orangepi-win" ]; then
+ else
+   ln -sf /usr/lib/kernel-overlays/base/lib/firmware/brcm/BCM43430A1.def /usr/lib/firmware/brcm/BCM43430A1.hcd
+ fi
 +
-+amixer -D hw:rockchiprt5640c cset name='Stereo DAC MIXL DAC L1 Switch' on
-+amixer -D hw:rockchiprt5640c cset name='Stereo DAC MIXR DAC R1 Switch' on
-+amixer -D hw:rockchiprt5640c cset name='SPOL MIX DAC L1 Switch' on
-+amixer -D hw:rockchiprt5640c cset name='SPOR MIX DAC R1 Switch' on
-+amixer -D hw:rockchiprt5640c cset name='Speaker L Playback Switch' on
-+amixer -D hw:rockchiprt5640c cset name='Speaker R Playback Switch' on
-+
-diff --git a/packages/kernel/linux-firmware/TN3399_V3-firmware/package.mk b/packages/kernel/linux-firmware/TN3399_V3-firmware/package.mk
-new file mode 100644
-index 00000000..b327e746
---- /dev/null
-+++ b/packages/kernel/linux-firmware/TN3399_V3-firmware/package.mk
-@@ -0,0 +1,15 @@
-+PKG_NAME="TN3399_V3-firmware"
-+PKG_VERSION="035c30e1045c9e0e44a8a4df37a4d3654b224c16"
-+PKG_LICENSE="GPL"
-+PKG_SITE="https://github.com/retro98boy"
-+PKG_URL="${PKG_SITE}/linux-tn3399-v3.git"
-+PKG_DEPENDS_TARGET="toolchain linux kernel-firmware"
-+PKG_NEED_UNPACK="${LINUX_DEPENDS}"
-+PKG_LONGDESC="TN3399_V3 Linux firmware"
-+PKG_IS_KERNEL_PKG="yes"
-+PKG_TOOLCHAIN="manual"
-+
-+makeinstall_target() {
-+  mkdir -p ${INSTALL}/usr/lib/kernel-overlays/base/lib/firmware/brcm
-+  cp ap6255-firmware/mainline/* ${INSTALL}/usr/lib/kernel-overlays/base/lib/firmware/brcm
-+}
++if [ "$DTNAME" = "tiannuo,tn3399-v3" ]; then
++  ln -sf /usr/lib/kernel-overlays/base/lib/firmware/brcm/brcmfmac43455-sdio.bin /usr/lib/firmware/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.bin
++  ln -sf /usr/lib/kernel-overlays/base/lib/firmware/brcm/brcmfmac43455-sdio.txt /usr/lib/firmware/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.txt
++fi
 diff --git a/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf b/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf
-index 7360751e..cb0b6fca 100644
+index 7360751e..b6e7edd5 100644
 --- a/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf
 +++ b/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf
+@@ -1401,7 +1401,7 @@ CONFIG_BT_HCIUART_ATH3K=y
+ # CONFIG_BT_HCIUART_LL is not set
+ # CONFIG_BT_HCIUART_3WIRE is not set
+ # CONFIG_BT_HCIUART_INTEL is not set
+-# CONFIG_BT_HCIUART_BCM is not set
++CONFIG_BT_HCIUART_BCM=y
+ # CONFIG_BT_HCIUART_RTL is not set
+ # CONFIG_BT_HCIUART_QCA is not set
+ # CONFIG_BT_HCIUART_AG6XX is not set
 @@ -2440,7 +2440,7 @@ CONFIG_BRCMUTIL=m
  CONFIG_BRCMFMAC=m
  CONFIG_BRCMFMAC_PROTO_BCDC=y
@@ -65,7 +177,7 @@ index 7360751e..cb0b6fca 100644
  # CONFIG_SND_SOC_RT5659 is not set
  # CONFIG_SND_SOC_RT9120 is not set
 diff --git a/projects/Rockchip/devices/RK3399/options b/projects/Rockchip/devices/RK3399/options
-index a8921cb7..b0f0d45d 100644
+index a0dfa6db..6281e1f7 100644
 --- a/projects/Rockchip/devices/RK3399/options
 +++ b/projects/Rockchip/devices/RK3399/options
 @@ -30,25 +30,21 @@
@@ -97,8 +209,8 @@ index a8921cb7..b0f0d45d 100644
   
    # Mali GPU family
      MALI_FAMILY="t860"
-@@ -67,7 +63,7 @@
-     WINDOWMANAGER="weston"
+@@ -70,7 +66,7 @@
+     PIPEWIRE_SUPPORT="yes"
  
    # kernel serial console
 -    EXTRA_CMDLINE="quiet rootwait console=tty0 video=DSI-1:1152x1920p60 fbcon=rotate:3 ssh consoleblank=0 systemd.show_status=0 loglevel=0 panic=20"
@@ -106,21 +218,21 @@ index a8921cb7..b0f0d45d 100644
  
    # additional packages to install
      ADDITIONAL_PACKAGES=""
-@@ -75,7 +71,7 @@
+@@ -78,7 +74,7 @@
    # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
    # Space separated list is supported,
    # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
 -    FIRMWARE="misc-firmware wlan-firmware RTL8188FU-firmware"
-+    FIRMWARE="misc-firmware wlan-firmware RTL8188FU-firmware TN3399_V3-firmware"
++    FIRMWARE="misc-firmware wlan-firmware brcmfmac_sdio-firmware"
  
    # additional drivers to install:
    # for a list of additional drivers see packages/linux-drivers
 diff --git a/projects/Rockchip/packages/linux/patches/RK3399/002-add-rk3399-tn3399-v3.patch b/projects/Rockchip/packages/linux/patches/RK3399/002-add-rk3399-tn3399-v3.patch
 new file mode 100644
-index 00000000..4cb496ab
+index 00000000..1977ece5
 --- /dev/null
 +++ b/projects/Rockchip/packages/linux/patches/RK3399/002-add-rk3399-tn3399-v3.patch
-@@ -0,0 +1,1201 @@
+@@ -0,0 +1,1225 @@
 +diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
 +index b7fb908eb..b549755c5 100644
 +--- a/arch/arm64/boot/dts/rockchip/Makefile
@@ -136,11 +248,12 @@ index 00000000..4cb496ab
 + dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353ps.dtb
 +diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dts b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dts
 +new file mode 100644
-+index 000000000..ccba3268c
++index 000000000..c75954305
 +--- /dev/null
 ++++ b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dts
-+@@ -0,0 +1,16 @@
++@@ -0,0 +1,18 @@
 ++/dts-v1/;
+++
 ++#include "rk3399-tn3399-v3-with-lvds-panel.dtsi"
 ++
 ++/ {
@@ -156,23 +269,56 @@ index 00000000..4cb496ab
 ++		compatible = "tc358775,1024x600-single-8bit";
 ++	};
 ++};
+++
 +diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-lvds-panel.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-lvds-panel.dtsi
 +new file mode 100644
-+index 000000000..ee08c93dd
++index 000000000..f2bda20a1
 +--- /dev/null
 ++++ b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-lvds-panel.dtsi
-+@@ -0,0 +1,60 @@
++@@ -0,0 +1,92 @@
 ++/dts-v1/;
+++
 ++#include "rk3399-tn3399-v3.dts"
 ++
 ++/ {
 ++	backlight: backlight {
-++		status = "okay";
 ++		compatible = "pwm-backlight";
-++		pwms = <&pwm0 0 25000 0>;
-++		brightness-levels = <0 4 8 16 32 64 128 255>;
-++		default-brightness-level = <7>;
 ++		enable-gpios = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
+++		pwms = <&pwm0 0 25000 0>;
+++		brightness-levels = <
+++			  0   1   2   3   4   5   6   7
+++			  8   9  10  11  12  13  14  15
+++			 16  17  18  19  20  21  22  23
+++			 24  25  26  27  28  29  30  31
+++			 32  33  34  35  36  37  38  39
+++			 40  41  42  43  44  45  46  47
+++			 48  49  50  51  52  53  54  55
+++			 56  57  58  59  60  61  62  63
+++			 64  65  66  67  68  69  70  71
+++			 72  73  74  75  76  77  78  79
+++			 80  81  82  83  84  85  86  87
+++			 88  89  90  91  92  93  94  95
+++			 96  97  98  99 100 101 102 103
+++			104 105 106 107 108 109 110 111
+++			112 113 114 115 116 117 118 119
+++			120 121 122 123 124 125 126 127
+++			128 129 130 131 132 133 134 135
+++			136 137 138 139 140 141 142 143
+++			144 145 146 147 148 149 150 151
+++			152 153 154 155 156 157 158 159
+++			160 161 162 163 164 165 166 167
+++			168 169 170 171 172 173 174 175
+++			176 177 178 179 180 181 182 183
+++			184 185 186 187 188 189 190 191
+++			192 193 194 195 196 197 198 199
+++			200 201 202 203 204 205 206 207
+++			208 209 210 211 212 213 214 215
+++			216 217 218 219 220 221 222 223
+++			224 225 226 227 228 229 230 231
+++			232 233 234 235 236 237 238 239
+++			240 241 242 243 244 245 246 247
+++			248 249 250 251 252 253 254 255>;
+++		default-brightness-level = <200>;
 ++	};
 ++
 ++	vcc_panel: vcc-panel {
@@ -186,8 +332,8 @@ index 00000000..4cb496ab
 ++};
 ++
 ++&mipi_dsi {
-++	status = "okay";
 ++	clock-master;
+++	status = "okay";
 ++
 ++	ports {
 ++		mipi_out: port@1 {
@@ -204,7 +350,6 @@ index 00000000..4cb496ab
 ++	panel@0 {
 ++		reg = <0>;
 ++		backlight = <&backlight>;
-++
 ++		power-supply = <&vcc_panel>;
 ++
 ++		port {
@@ -222,25 +367,27 @@ index 00000000..4cb496ab
 ++		};
 ++	};
 ++};
+++
 +diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3.dts b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3.dts
 +new file mode 100644
-+index 000000000..40b1080f7
++index 000000000..16ec743c1
 +--- /dev/null
 ++++ b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3.dts
-+@@ -0,0 +1,798 @@
++@@ -0,0 +1,788 @@
 ++/dts-v1/;
+++
+++#include <dt-bindings/input/linux-event-codes.h>
 ++#include <dt-bindings/pwm/pwm.h>
 ++#include "rk3399.dtsi"
-++#include "rk3399-opp.dtsi"
 ++
 ++/ {
-++	model = "TN3399_V3 Board";
-++	compatible = "rockchip,tn3399_v3", "rockchip,rk3399";
+++	model = "TIANNUO TN3399_V3";
+++	compatible = "tiannuo,tn3399-v3", "rockchip,rk3399";
 ++
 ++	aliases {
-++		mmc0 = &sdio0;
+++		mmc0 = &sdhci;
 ++		mmc1 = &sdmmc;
-++		mmc2 = &sdhci;
+++		mmc2 = &sdio0;
 ++	};
 ++
 ++	chosen {
@@ -254,12 +401,12 @@ index 00000000..4cb496ab
 ++		#clock-cells = <0>;
 ++	};
 ++
-++	gpio-leds {
+++	leds {
 ++		compatible = "gpio-leds";
 ++		pinctrl-names = "default";
-++		pinctrl-0 = <&sys_led_pin>;
+++		pinctrl-0 = <&sys_led>;
 ++
-++		sys_led: led-0 {
+++		sys-led {
 ++			label = "sys";
 ++			gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
 ++			linux,default-trigger = "heartbeat";
@@ -269,20 +416,20 @@ index 00000000..4cb496ab
 ++	rt5640-sound {
 ++		compatible = "simple-audio-card";
 ++		pinctrl-names = "default";
-++		pinctrl-0 = <&hp_det_pin>;
+++		pinctrl-0 = <&hp_det>;
 ++		simple-audio-card,name = "rockchip,rt5640-codec";
 ++		simple-audio-card,format = "i2s";
 ++		simple-audio-card,mclk-fs = <256>;
 ++		simple-audio-card,widgets =
 ++			"Microphone", "Internal Microphone",
-++			"Headphone", "Headphone Jack",
+++			"Headphone", "Headphones",
 ++			"Speaker", "Internal Speakers";
 ++		simple-audio-card,routing =
 ++			"Internal Microphone", "MICBIAS1",
 ++			"IN1P", "Internal Microphone",
 ++			"IN1N", "Internal Microphone",
-++			"Headphone Jack", "HPOL",
-++			"Headphone Jack", "HPOR",
+++			"Headphones", "HPOL",
+++			"Headphones", "HPOR",
 ++			"NS4258 INL", "SPOLP",
 ++			"NS4258 INL", "SPOLN",
 ++			"NS4258 INR", "SPORP",
@@ -314,7 +461,7 @@ index 00000000..4cb496ab
 ++	sdio_pwrseq: sdio-pwrseq {
 ++		compatible = "mmc-pwrseq-simple";
 ++		clocks = <&rk808 1>;
-++		clock-names = "ext_clock";
+++		clock-names = "lpo";
 ++		pinctrl-names = "default";
 ++		pinctrl-0 = <&wifi_enable_h>;
 ++		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
@@ -387,6 +534,16 @@ index 00000000..4cb496ab
 ++		vin-supply = <&vcc3v3_sys>;
 ++	};
 ++
+++	vcca0v9_s3: vcca0v9-s3 {
+++		compatible = "regulator-fixed";
+++		regulator-name = "vcca0v9_s3";
+++		regulator-always-on;
+++		regulator-boot-on;
+++		regulator-min-microvolt = <900000>;
+++		regulator-max-microvolt = <900000>;
+++		vin-supply = <&vcc_1v8>;
+++	};
+++
 ++	vcc_lan: vcc-lan {
 ++		compatible = "regulator-fixed";
 ++		regulator-name = "vcc_lan";
@@ -405,7 +562,7 @@ index 00000000..4cb496ab
 ++		regulator-always-on;
 ++		regulator-boot-on;
 ++		regulator-min-microvolt = <800000>;
-++		regulator-max-microvolt = <1700000>;
+++		regulator-max-microvolt = <1400000>;
 ++	};
 ++
 ++	audio_5v: audio-5v {
@@ -443,22 +600,6 @@ index 00000000..4cb496ab
 ++	cpu-supply = <&vdd_cpu_b>;
 ++};
 ++
-++&cpu_thermal {
-++	trips {
-++		cpu_warm: cpu_warm {
-++			temperature = <55000>;
-++			hysteresis = <2000>;
-++			type = "active";
-++		};
-++
-++		cpu_hot: cpu_hot {
-++			temperature = <65000>;
-++			hysteresis = <2000>;
-++			type = "active";
-++		};
-++	};
-++};
-++
 ++&emmc_phy {
 ++	status = "okay";
 ++};
@@ -479,7 +620,14 @@ index 00000000..4cb496ab
 ++	status = "okay";
 ++};
 ++
+++&gpu {
+++	mali-supply = <&vdd_gpu>;
+++	status = "okay";
+++};
+++
 ++&hdmi {
+++	avdd-0v9-supply = <&vcca0v9_s3>;
+++	avdd-1v8-supply = <&vcca1v8_s3>;
 ++	ddc-i2c-bus = <&i2c3>;
 ++	pinctrl-names = "default";
 ++	pinctrl-0 = <&hdmi_cec>;
@@ -490,16 +638,11 @@ index 00000000..4cb496ab
 ++	status = "okay";
 ++};
 ++
-++&gpu {
-++	mali-supply = <&vdd_gpu>;
-++	status = "okay";
-++};
-++
 ++&i2c0 {
-++	status = "okay";
 ++	clock-frequency = <400000>;
 ++	i2c-scl-rising-time-ns = <168>;
 ++	i2c-scl-falling-time-ns = <4>;
+++	status = "okay";
 ++
 ++	rk808: pmic@1b {
 ++		compatible = "rockchip,rk808";
@@ -609,10 +752,10 @@ index 00000000..4cb496ab
 ++				regulator-always-on;
 ++				regulator-boot-on;
 ++				regulator-min-microvolt = <1800000>;
-++				regulator-max-microvolt = <3000000>;
+++				regulator-max-microvolt = <3300000>;
 ++				regulator-state-mem {
 ++					regulator-on-in-suspend;
-++					regulator-suspend-microvolt = <3000000>;
+++					regulator-suspend-microvolt = <3300000>;
 ++				};
 ++			};
 ++
@@ -667,7 +810,7 @@ index 00000000..4cb496ab
 ++				regulator-always-on;
 ++				regulator-boot-on;
 ++				regulator-state-mem {
-++					regulator-off-in-suspend;
+++					regulator-on-in-suspend;
 ++				};
 ++			};
 ++
@@ -732,55 +875,44 @@ index 00000000..4cb496ab
 ++		realtek,in1-differential;
 ++		#sound-dai-cells = <0>;
 ++		pinctrl-names = "default";
-++		pinctrl-0 = <&ear_ctrl_pin>;
+++		pinctrl-0 = <&ear_ctrl>;
 ++	};
 ++};
 ++
 ++&i2c2 {
-++	i2c-scl-rising-time-ns = <300>;
-++	i2c-scl-falling-time-ns = <15>;
 ++	status = "okay";
 ++};
 ++
 ++&i2c3 {
-++	i2c-scl-rising-time-ns = <450>;
-++	i2c-scl-falling-time-ns = <15>;
 ++	status = "okay";
 ++};
 ++
 ++&i2c4 {
-++	i2c-scl-rising-time-ns = <600>;
-++	i2c-scl-falling-time-ns = <20>;
 ++	status = "okay";
 ++};
 ++
 ++&i2s0 {
-++	rockchip,playback-channels = <8>;
-++	rockchip,capture-channels = <8>;
+++	#sound-dai-cells = <0>;
 ++	status = "okay";
 ++};
 ++
 ++&i2s1 {
 ++	rockchip,playback-channels = <2>;
 ++	rockchip,capture-channels = <2>;
+++	#sound-dai-cells = <0>;
 ++	status = "okay";
 ++};
 ++
 ++&i2s2 {
+++	#sound-dai-cells = <0>;
 ++	status = "okay";
 ++};
 ++
 ++&io_domains {
-++	status = "okay";
-++
 ++	bt656-supply = <&vcc1v8_dvp>;
 ++	audio-supply = <&vcca1v8_codec>;
 ++	sdmmc-supply = <&vcc_sdio>;
 ++	gpio1830-supply = <&vcc_3v0>;
-++};
-++
-++&pmu_io_domains {
-++	pmu1830-supply = <&vcc_1v8>;
 ++	status = "okay";
 ++};
 ++
@@ -799,8 +931,22 @@ index 00000000..4cb496ab
 ++		};
 ++	};
 ++
+++	rt5640 {
+++		ear_ctrl: ear-ctrl {
+++			rockchip,pins = <4 RK_PC5 RK_FUNC_GPIO &pcfg_output_high>;
+++		};
+++
+++		hp_det: hp-det {
+++			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
+++		};
+++
+++		ns4258_en: ns4258-en {
+++			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+++		};
+++	};
+++
 ++	leds {
-++		sys_led_pin: sys-led-pin {
+++		sys_led: sys-led {
 ++			rockchip,pins = <1 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
 ++		};
 ++	};
@@ -819,36 +965,9 @@ index 00000000..4cb496ab
 ++		};
 ++	};
 ++
-++	sdcard {
+++	sdmmc {
 ++		sdmmc0_pwr_h: sdmmc0-pwr-h {
 ++			rockchip,pins = <0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
-++		};
-++
-++	};
-++
-++	sound {
-++		ear_ctrl_pin: ear-ctrl-pin {
-++			rockchip,pins = <4 RK_PC5 RK_FUNC_GPIO &pcfg_output_high>;
-++		};
-++
-++		hp_det_pin: hp-det-pin {
-++			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
-++		};
-++
-++		ns4258_en: ns4258-en {
-++			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
-++		};
-++	};
-++
-++	sdio-pwrseq {
-++		wifi_enable_h: wifi-enable-h {
-++			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-++		};
-++	};
-++
-++	wifi {
-++		wifi_host_wake_l: wifi-host-wake-l {
-++			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
 ++		};
 ++	};
 ++
@@ -857,6 +976,21 @@ index 00000000..4cb496ab
 ++			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
 ++		};
 ++	};
+++
+++	wifi {
+++		wifi_enable_h: wifi-enable-h {
+++			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
+++		};
+++
+++		wifi_host_wake_l: wifi-host-wake-l {
+++			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
+++		};
+++	};
+++};
+++
+++&pmu_io_domains {
+++	pmu1830-supply = <&vcc_1v8>;
+++	status = "okay";
 ++};
 ++
 ++&pwm0 {
@@ -869,6 +1003,14 @@ index 00000000..4cb496ab
 ++
 ++&saradc {
 ++	vref-supply = <&vcca1v8_s3>;
+++	status = "okay";
+++};
+++
+++&sdhci {
+++	max-frequency = <150000000>;
+++	bus-width = <8>;
+++	mmc-hs200-1_8v;
+++	non-removable;
 ++	status = "okay";
 ++};
 ++
@@ -899,22 +1041,15 @@ index 00000000..4cb496ab
 ++
 ++&sdmmc {
 ++	bus-width = <4>;
+++	cap-mmc-highspeed;
 ++	cap-sd-highspeed;
 ++	cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
 ++	disable-wp;
 ++	max-frequency = <150000000>;
 ++	pinctrl-names = "default";
-++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
+++	pinctrl-0 = <&sdmmc_clk &sdmmc_cd &sdmmc_cmd &sdmmc_bus4>;
 ++	vmmc-supply = <&vcc3v0_sd>;
 ++	vqmmc-supply = <&vcc_sdio>;
-++	status = "okay";
-++};
-++
-++&sdhci {
-++	bus-width = <8>;
-++	mmc-hs400-1_8v;
-++	mmc-hs400-enhanced-strobe;
-++	non-removable;
 ++	status = "okay";
 ++};
 ++
@@ -964,7 +1099,7 @@ index 00000000..4cb496ab
 ++	bluetooth {
 ++		compatible = "brcm,bcm4345c5";
 ++		clocks = <&rk808 1>;
-++		clock-names = "ext_clock";
+++		clock-names = "lpo";
 ++		device-wakeup-gpios = <&gpio2 RK_PD2 GPIO_ACTIVE_HIGH>;
 ++		host-wakeup-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
 ++		shutdown-gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
@@ -998,8 +1133,8 @@ index 00000000..4cb496ab
 ++};
 ++
 ++&usbdrd_dwc3_0 {
-++	status = "okay";
 ++	dr_mode = "host";
+++	status = "okay";
 ++};
 ++
 ++&usbdrd3_1 {
@@ -1007,8 +1142,8 @@ index 00000000..4cb496ab
 ++};
 ++
 ++&usbdrd_dwc3_1 {
-++	status = "okay";
 ++	dr_mode = "host";
+++	status = "okay";
 ++};
 ++
 ++&vopb {
@@ -1026,6 +1161,7 @@ index 00000000..4cb496ab
 ++&vopl_mmu {
 ++	status = "okay";
 ++};
+++
 +diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
 +index 203c0ef0b..f2713f2a7 100644
 +--- a/drivers/gpu/drm/panel/Kconfig
@@ -1042,7 +1178,7 @@ index 00000000..4cb496ab
 ++	depends on BACKLIGHT_CLASS_DEVICE
 ++	help
 ++	  say Y here if you want to enable support for TOSHIBA TC358775
-++	  panel as found in TN3399_V3.
+++	  panel as found in TIANNUO TN3399_V3.
 + endmenu
 +diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
 +index 30cf553c8..037bb5170 100644
@@ -1320,5 +1456,5 @@ index 00000000..4cb496ab
 ++module_mipi_dsi_driver(tc358775_driver);
 ++
 ++MODULE_AUTHOR("retro98boy <retro98boy@qq.com>");
-++MODULE_DESCRIPTION("LVDS panel driver for TN3399_V3 with TC358775");
+++MODULE_DESCRIPTION("LVDS panel driver for TIANNUO TN3399_V3 with TC358775");
 ++MODULE_LICENSE("GPL v2");
