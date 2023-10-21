@@ -122,7 +122,7 @@ index 0000000000..f2bda20a1b
 +
 diff --git a/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3.dts b/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3.dts
 new file mode 100644
-index 0000000000..d660e0b3e9
+index 0000000000..80f1c4bca6
 --- /dev/null
 +++ b/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3.dts
 @@ -0,0 +1,788 @@
@@ -133,8 +133,8 @@ index 0000000000..d660e0b3e9
 +#include "rockchip/rk3399.dtsi"
 +
 +/ {
-+	model = "TN3399_V3 Board";
-+	compatible = "rockchip,tn3399_v3", "rockchip,rk3399";
++	model = "TIANNUO TN3399_V3";
++	compatible = "tiannuo,tn3399-v3", "rockchip,rk3399";
 +
 +	aliases {
 +		mmc0 = &sdhci;
@@ -174,14 +174,14 @@ index 0000000000..d660e0b3e9
 +		simple-audio-card,mclk-fs = <256>;
 +		simple-audio-card,widgets =
 +			"Microphone", "Internal Microphone",
-+			"Headphone", "Headphone Jack",
++			"Headphone", "Headphones",
 +			"Speaker", "Internal Speakers";
 +		simple-audio-card,routing =
 +			"Internal Microphone", "MICBIAS1",
 +			"IN1P", "Internal Microphone",
 +			"IN1N", "Internal Microphone",
-+			"Headphone Jack", "HPOL",
-+			"Headphone Jack", "HPOR",
++			"Headphones", "HPOL",
++			"Headphones", "HPOR",
 +			"NS4258 INL", "SPOLP",
 +			"NS4258 INL", "SPOLN",
 +			"NS4258 INR", "SPORP",
@@ -937,15 +937,15 @@ index 66f411dd25..adff88eda9 100644
  # CONFIG_SND_SOC_RT9120 is not set
 diff --git a/board/batocera/rockchip/rk3399/linux_patches/linux-0000-drivers-gpu-drm-panel-add-tc358775.patch b/board/batocera/rockchip/rk3399/linux_patches/linux-0000-drivers-gpu-drm-panel-add-tc358775.patch
 new file mode 100644
-index 0000000000..4a423c17cd
+index 0000000000..7a252e0c4c
 --- /dev/null
 +++ b/board/batocera/rockchip/rk3399/linux_patches/linux-0000-drivers-gpu-drm-panel-add-tc358775.patch
 @@ -0,0 +1,296 @@
 +diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-+index a582ddd58..7a5528946 100644
++index 203c0ef0b..70e7927d7 100644
 +--- a/drivers/gpu/drm/panel/Kconfig
 ++++ b/drivers/gpu/drm/panel/Kconfig
-+@@ -717,4 +717,13 @@ config DRM_PANEL_XINPENG_XPP055C272
++@@ -812,4 +812,13 @@ config DRM_PANEL_XINPENG_XPP055C272
 + 	  Say Y here if you want to enable support for the Xinpeng
 + 	  XPP055C272 controller for 720x1280 LCD panels with MIPI/RGB/SPI
 + 	  system interfaces.
@@ -957,20 +957,20 @@ index 0000000000..4a423c17cd
 ++	depends on BACKLIGHT_CLASS_DEVICE
 ++	help
 ++	  say Y here if you want to enable support for TOSHIBA TC358775
-++	  panel as found in TN3399_V3.
+++	  panel as found in TIANNUO TN3399_V3.
 + endmenu
 +diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-+index 34e717382..a1ec277ac 100644
++index 30cf553c8..037bb5170 100644
 +--- a/drivers/gpu/drm/panel/Makefile
 ++++ b/drivers/gpu/drm/panel/Makefile
-+@@ -73,3 +73,4 @@ obj-$(CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA) += panel-truly-nt35597.o
-+ obj-$(CONFIG_DRM_PANEL_VISIONOX_RM69299) += panel-visionox-rm69299.o
++@@ -83,3 +83,4 @@ obj-$(CONFIG_DRM_PANEL_VISIONOX_RM69299) += panel-visionox-rm69299.o
++ obj-$(CONFIG_DRM_PANEL_VISIONOX_VTDR6130) += panel-visionox-vtdr6130.o
 + obj-$(CONFIG_DRM_PANEL_WIDECHIPS_WS2401) += panel-widechips-ws2401.o
 + obj-$(CONFIG_DRM_PANEL_XINPENG_XPP055C272) += panel-xinpeng-xpp055c272.o
 ++obj-$(CONFIG_DRM_PANEL_TOSHIBA_TC358775) += panel-toshiba-tc358775.o
 +diff --git a/drivers/gpu/drm/panel/panel-toshiba-tc358775.c b/drivers/gpu/drm/panel/panel-toshiba-tc358775.c
 +new file mode 100644
-+index 000000000..588c62556
++index 000000000..e75c103d4
 +--- /dev/null
 ++++ b/drivers/gpu/drm/panel/panel-toshiba-tc358775.c
 +@@ -0,0 +1,263 @@
@@ -1235,7 +1235,7 @@ index 0000000000..4a423c17cd
 ++module_mipi_dsi_driver(tc358775_driver);
 ++
 ++MODULE_AUTHOR("retro98boy <retro98boy@qq.com>");
-++MODULE_DESCRIPTION("LVDS panel driver for TN3399_V3 with TC358775");
+++MODULE_DESCRIPTION("LVDS panel driver for TIANNUO TN3399_V3 with TC358775");
 ++MODULE_LICENSE("GPL v2");
 diff --git a/board/batocera/rockchip/rk3399/tn3399-v3/boot/extlinux.conf b/board/batocera/rockchip/rk3399/tn3399-v3/boot/extlinux.conf
 new file mode 100755
@@ -1335,16 +1335,15 @@ index 0000000000..3a7be43f03
 +	}
 +}
 diff --git a/configs/batocera-rk3399.board b/configs/batocera-rk3399.board
-index bb1153f69d..fe69a9a395 100644
+index bb1153f69d..930a132e7d 100644
 --- a/configs/batocera-rk3399.board
 +++ b/configs/batocera-rk3399.board
-@@ -28,7 +28,8 @@ BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
+@@ -28,7 +28,7 @@ BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
  # Build the DTB from the kernel sources
  BR2_LINUX_KERNEL_DTS_SUPPORT=y
  BR2_LINUX_KERNEL_INTREE_DTS_NAME="rockchip/rk3399-rockpro64 rockchip/rk3399-rock960 rockchip/rk3399-rock-pi-4b"
 -BR2_LINUX_KERNEL_CUSTOM_DTS_PATH="$(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-anbernic-rg552.dts $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-orangepi-4-lts.dts"
-+BR2_LINUX_KERNEL_CUSTOM_DTS_PATH="$(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-anbernic-rg552.dts $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-orangepi-4-lts.dts \
-+$(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3.dts $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3-with-lvds-panel.dtsi $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dts"
++BR2_LINUX_KERNEL_CUSTOM_DTS_PATH="$(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-anbernic-rg552.dts $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-orangepi-4-lts.dts $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3.dts $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3-with-lvds-panel.dtsi $(BR2_EXTERNAL_BATOCERA_PATH)/board/batocera/rockchip/rk3399/dts/rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dts"
  
  # Bootloader
  BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM="rk3399"
@@ -1363,15 +1362,15 @@ index 7f451d3c35..3fe1984fba 100644
    default "orangepi_3 orangepi_3_lts orangepi_one_plus"                      if BR2_PACKAGE_BATOCERA_TARGET_H6
 diff --git a/package/batocera/boot/uboot-multiboard/common-rk3399/0001-add-tn3399-v3.patch b/package/batocera/boot/uboot-multiboard/common-rk3399/0001-add-tn3399-v3.patch
 new file mode 100644
-index 0000000000..c506732f9f
+index 0000000000..15232ce84f
 --- /dev/null
 +++ b/package/batocera/boot/uboot-multiboard/common-rk3399/0001-add-tn3399-v3.patch
 @@ -0,0 +1,919 @@
 +diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-+index 480269fa..eed4a5b7 100644
++index 43951a77..263df279 100644
 +--- a/arch/arm/dts/Makefile
 ++++ b/arch/arm/dts/Makefile
-+@@ -163,6 +163,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
++@@ -161,6 +161,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
 + 	rk3399-rock-pi-4c.dtb \
 + 	rk3399-rock960.dtb \
 + 	rk3399-rockpro64.dtb \
@@ -1404,7 +1403,7 @@ index 0000000000..c506732f9f
 ++};
 +diff --git a/arch/arm/dts/rk3399-tn3399-v3.dts b/arch/arm/dts/rk3399-tn3399-v3.dts
 +new file mode 100644
-+index 00000000..16ec743c
++index 00000000..48003d14
 +--- /dev/null
 ++++ b/arch/arm/dts/rk3399-tn3399-v3.dts
 +@@ -0,0 +1,788 @@
@@ -1415,8 +1414,8 @@ index 0000000000..c506732f9f
 ++#include "rk3399.dtsi"
 ++
 ++/ {
-++	model = "TN3399_V3 Board";
-++	compatible = "rockchip,tn3399_v3", "rockchip,rk3399";
+++	model = "TIANNUO TN3399_V3";
+++	compatible = "tiannuo,tn3399-v3", "rockchip,rk3399";
 ++
 ++	aliases {
 ++		mmc0 = &sdhci;
@@ -1456,14 +1455,14 @@ index 0000000000..c506732f9f
 ++		simple-audio-card,mclk-fs = <256>;
 ++		simple-audio-card,widgets =
 ++			"Microphone", "Internal Microphone",
-++			"Headphone", "Headphone Jack",
+++			"Headphone", "Headphones",
 ++			"Speaker", "Internal Speakers";
 ++		simple-audio-card,routing =
 ++			"Internal Microphone", "MICBIAS1",
 ++			"IN1P", "Internal Microphone",
 ++			"IN1N", "Internal Microphone",
-++			"Headphone Jack", "HPOL",
-++			"Headphone Jack", "HPOR",
+++			"Headphones", "HPOL",
+++			"Headphones", "HPOR",
 ++			"NS4258 INL", "SPOLP",
 ++			"NS4258 INL", "SPOLN",
 ++			"NS4258 INR", "SPORP",
@@ -2287,10 +2286,10 @@ index 0000000000..c506732f9f
 ++CONFIG_SPL_TINY_MEMSET=y
 ++CONFIG_ERRNO_STR=y
 diff --git a/package/batocera/core/batocera-system/Config.in b/package/batocera/core/batocera-system/Config.in
-index cb6c80252a..7855c79cfc 100644
+index 2a845688e2..7a90cf6e4f 100644
 --- a/package/batocera/core/batocera-system/Config.in
 +++ b/package/batocera/core/batocera-system/Config.in
-@@ -438,7 +438,7 @@ config BR2_TARGET_BATOCERA_IMAGES_DEFINITIONS
+@@ -441,7 +441,7 @@ config BR2_TARGET_BATOCERA_IMAGES_DEFINITIONS
                                                                                              if BR2_PACKAGE_BATOCERA_TARGET_S922X
      default "amlogic/s905/odroidc2 amlogic/s905/tvbox amlogic/s905/lepotato amlogic/s905/vim amlogic/s905/p201" \
                                                                                              if BR2_PACKAGE_BATOCERA_TARGET_S905
@@ -2299,35 +2298,25 @@ index cb6c80252a..7855c79cfc 100644
                                                                                              if BR2_PACKAGE_BATOCERA_TARGET_RK3399
      default "rockchip/rk3588/rock-5b rockchip/rk3588/rock-5a rockchip/rk3588/quartzpro64 rockchip/rk3588/orangepi-5 rockchip/rk3588/orangepi-5b rockchip/rk3588/orangepi-5-plus rockchip/rk3588/indiedroid-nova rockchip/rk3588/mekotronics-r58" \
                                                                                              if BR2_PACKAGE_BATOCERA_TARGET_RK3588
-diff --git a/package/batocera/emulationstation/batocera-emulationstation/wayland/sway-launch b/package/batocera/emulationstation/batocera-emulationstation/wayland/sway-launch
-index 105281f75b..679ec7d9b7 100755
---- a/package/batocera/emulationstation/batocera-emulationstation/wayland/sway-launch
-+++ b/package/batocera/emulationstation/batocera-emulationstation/wayland/sway-launch
-@@ -1,4 +1,4 @@
- #!/bin/sh
- 
- SWAY_LOG_FILE=/userdata/system/logs/sway.log
--/usr/bin/sway -d > ${SWAY_LOG_FILE} 2>&1
-+WLR_LIBINPUT_NO_DEVICES=1 /usr/bin/sway -d > ${SWAY_LOG_FILE} 2>&1
 diff --git a/package/batocera/firmwares/extralinuxfirmwares/001-add-link-for-tn3399-v3.patch b/package/batocera/firmwares/extralinuxfirmwares/001-add-link-for-tn3399-v3.patch
 new file mode 100644
-index 0000000000..be1244e20e
+index 0000000000..09cd60e875
 --- /dev/null
 +++ b/package/batocera/firmwares/extralinuxfirmwares/001-add-link-for-tn3399-v3.patch
 @@ -0,0 +1,16 @@
-+diff --git a/brcm/brcmfmac43455-sdio.rockchip,tn3399_v3.bin b/brcm/brcmfmac43455-sdio.rockchip,tn3399_v3.bin
++diff --git a/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.bin b/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.bin
 +new file mode 120000
 +index 0000000..e44aa55
 +--- /dev/null
-++++ b/brcm/brcmfmac43455-sdio.rockchip,tn3399_v3.bin
+++++ b/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.bin
 +@@ -0,0 +1 @@
 ++brcmfmac43455-sdio.bin
 +\ No newline at end of file
-+diff --git a/brcm/brcmfmac43455-sdio.rockchip,tn3399_v3.txt b/brcm/brcmfmac43455-sdio.rockchip,tn3399_v3.txt
++diff --git a/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.txt b/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.txt
 +new file mode 120000
 +index 0000000..2aba486
 +--- /dev/null
-++++ b/brcm/brcmfmac43455-sdio.rockchip,tn3399_v3.txt
+++++ b/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.txt
 +@@ -0,0 +1 @@
 ++brcmfmac43455-sdio.txt
 +\ No newline at end of file
