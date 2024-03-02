@@ -63,8 +63,8 @@ JELOS集成了RetroArch和一些独立模拟器如PPSSPP，并且带有Emulation
 cd Desktop
 git clone https://github.com/JustEnoughLinuxOS/distribution.git
 cd distribution
-# 切换到20231012版本
-git checkout 1e4ba135
+# 切换到20240222版本
+git checkout cfcbf9e5b
 ```
 
 ### 打补丁
@@ -72,7 +72,7 @@ git checkout 1e4ba135
 将patch复制到distribution目录里，cd进入其中，打上补丁：
 
 ```
-patch -p1 < jelos-20231012-add-tn3399-v3.patch
+patch -p1 < jelos-20240222-add-tn3399-v3.patch
 ```
 
 ### 编译
