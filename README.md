@@ -65,8 +65,8 @@ PS：ROCKNIX是JELOS部分开发人员创建的一个新项目，而原JELOS已�
 cd Desktop
 git clone -b main https://github.com/ROCKNIX/distribution.git
 cd distribution
-# 切换到20240517版本
-git checkout e6679087340a810cc3ba687896f9752a0428da3e
+# 切换到20240702版本
+git checkout 74e0aa3bcefd139376201550df2af68257eab834
 ```
 
 ### 打补丁
@@ -74,51 +74,7 @@ git checkout e6679087340a810cc3ba687896f9752a0428da3e
 将patch复制到distribution目录里，cd进入其中，打上补丁：
 
 ```
-patch -p1 < rocknix-20240517-add-tn3399-v3.patch
-```
-
-### 准备编译
-
-目前官方未上传用于编译ROCKNIX的镜像到Docker Hub，需要自己使用Dockfile来构建镜像
-
-先对Dockerfile做修改以加速构建：
-
-```
-diff --git a/Dockerfile b/Dockerfile
-index fe5eaac4d..2012f2388 100644
---- a/Dockerfile
-+++ b/Dockerfile
-@@ -3,6 +3,8 @@ FROM ubuntu:jammy
- ARG DEBIAN_FRONTEND=noninteractive
- SHELL ["/usr/bin/bash", "-c"]
-
-+RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list && apt update
-+
- RUN apt-get update --fix-missing\
-  && apt-get dist-upgrade -y \
-  && apt-get install -y locales sudo
-```
-
-然后在distribution目录下执行：
-
-docker build -t rocknix/rocknix-build:latest .
-
-对于20240517版ROCKNIX，connman包下载失败，改下url即可：
-
-```
-diff --git a/packages/network/connman/package.mk b/packages/network/connman/package.mk
-index 5db2516ae..247ee7261 100644
---- a/packages/network/connman/package.mk
-+++ b/packages/network/connman/package.mk
-@@ -4,7 +4,7 @@
- # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
-
- PKG_NAME="connman"
--PKG_VERSION="7d531a0d2b44b273ee78453b086454a8181a47a8" # 1.42
-+PKG_VERSION="1.42" # 1.42
- PKG_LICENSE="GPL"
- PKG_SITE="http://www.connman.net"
- PKG_URL="https://git.kernel.org/pub/scm/network/connman/connman.git/snapshot/connman-${PKG_VERSION}.tar.gz"
+patch -p1 < rocknix-20240702-add-tn3399-v3.patch
 ```
 
 ### 编译

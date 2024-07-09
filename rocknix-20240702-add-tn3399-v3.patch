@@ -184,33 +184,8 @@ index 000000000..da2755cb9
 +    cp -av brcm/brcmfmac43455-sdio.txt ${INSTALL}/$(get_kernel_overlay_dir)/lib/firmware/brcm/brcmfmac43455-sdio.tiannuo,tn3399-v3.txt
 +    cp -av BCM4345C0.hcd ${INSTALL}/$(get_kernel_overlay_dir)/lib/firmware/brcm/
 +}
-diff --git a/packages/wayland/weston/config/weston.ini b/packages/wayland/weston/config/weston.ini
-index 212f50209..c286293e1 100644
---- a/packages/wayland/weston/config/weston.ini
-+++ b/packages/wayland/weston/config/weston.ini
-@@ -1,6 +1,7 @@
- [core]
- idle-time=0
- backend=drm-backend.so
-+require-input=false
- xwayland=true
- 
- [xwayland]
-diff --git a/packages/wayland/weston/system.d/weston.service b/packages/wayland/weston/system.d/weston.service
-index f3d2d4e88..18a99c57a 100644
---- a/packages/wayland/weston/system.d/weston.service
-+++ b/packages/wayland/weston/system.d/weston.service
-@@ -10,7 +10,7 @@ Environment=LANG=C
- Environment=XDG_RUNTIME_DIR=/var/run/0-runtime-dir
- WorkingDirectory=/storage
- ExecStartPre=-/usr/lib/weston/weston-config
--ExecStart=/usr/bin/weston --flight-rec-scopes= --log=/var/log/weston.log
-+ExecStart=/usr/bin/weston --continue-without-input --flight-rec-scopes= --log=/var/log/weston.log
- Restart=always
- RestartSec=2
- 
 diff --git a/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf b/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf
-index 4d3adf696..1babecf4b 100644
+index c1a8261f9..6a1675ba7 100644
 --- a/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf
 +++ b/projects/Rockchip/devices/RK3399/linux/linux.aarch64.conf
 @@ -1265,7 +1265,7 @@ CONFIG_BT_HCIUART_H4=y
@@ -365,18 +340,7 @@ index 4d3adf696..1babecf4b 100644
  # CONFIG_WLAN_VENDOR_INTEL is not set
  # CONFIG_WLAN_VENDOR_INTERSIL is not set
  # CONFIG_WLAN_VENDOR_MARVELL is not set
-@@ -3172,8 +3281,8 @@ CONFIG_DRM_DISPLAY_HDMI_HELPER=y
- # CONFIG_DRM_DP_AUX_CHARDEV is not set
- # CONFIG_DRM_DP_CEC is not set
- CONFIG_DRM_GEM_DMA_HELPER=y
--CONFIG_DRM_GEM_SHMEM_HELPER=m
--CONFIG_DRM_SCHED=m
-+CONFIG_DRM_GEM_SHMEM_HELPER=y
-+CONFIG_DRM_SCHED=y
- 
- #
- # I2C encoder or helper chips
-@@ -3304,6 +3413,7 @@ CONFIG_DRM_PANEL_SHARP_LS054B3SX01=y
+@@ -3305,6 +3414,7 @@ CONFIG_DRM_PANEL_SHARP_LS054B3SX01=y
  # CONFIG_DRM_PANEL_VISIONOX_VTDR6130 is not set
  # CONFIG_DRM_PANEL_WIDECHIPS_WS2401 is not set
  # CONFIG_DRM_PANEL_XINPENG_XPP055C272 is not set
@@ -384,7 +348,7 @@ index 4d3adf696..1babecf4b 100644
  # end of Display Panels
  
  CONFIG_DRM_BRIDGE=y
-@@ -3647,9 +3757,10 @@ CONFIG_SND_SOC_ES8316=y
+@@ -3648,9 +3758,10 @@ CONFIG_SND_SOC_ES8316=y
  # CONFIG_SND_SOC_PEB2466 is not set
  # CONFIG_SND_SOC_RK3328 is not set
  # CONFIG_SND_SOC_RK817 is not set
@@ -1381,12 +1345,12 @@ index 000000000..8415a9a19
 ++CONFIG_ERRNO_STR=y
 diff --git a/projects/Rockchip/patches/linux/RK3399/002-add-rk3399-tn3399-v3.patch b/projects/Rockchip/patches/linux/RK3399/002-add-rk3399-tn3399-v3.patch
 new file mode 100644
-index 000000000..58a240cf4
+index 000000000..6c6fd0e91
 --- /dev/null
 +++ b/projects/Rockchip/patches/linux/RK3399/002-add-rk3399-tn3399-v3.patch
-@@ -0,0 +1,1243 @@
+@@ -0,0 +1,1254 @@
 +diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-+index a7b30e11b..9593daf02 100644
++index f906a868b..f58eeb492 100644
 +--- a/arch/arm64/boot/dts/rockchip/Makefile
 ++++ b/arch/arm64/boot/dts/rockchip/Makefile
 +@@ -70,6 +70,8 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64-v2.dtb
@@ -1396,8 +1360,8 @@ index 000000000..58a240cf4
 ++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tn3399-v3.dtb
 ++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dtb
 + dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399pro-rock-pi-n10.dtb
-+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353p.dtb
-+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353ps.dtb
++ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg-arc-d.dtb
++ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg-arc-s.dtb
 +diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dts b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3-with-1024x600-single-8bit-lvds-panel.dts
 +new file mode 100644
 +index 000000000..c75954305
@@ -1522,10 +1486,10 @@ index 000000000..58a240cf4
 ++
 +diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3.dts b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3.dts
 +new file mode 100644
-+index 000000000..112df5d39
++index 000000000..2b9a0fdc5
 +--- /dev/null
 ++++ b/arch/arm64/boot/dts/rockchip/rk3399-tn3399-v3.dts
-+@@ -0,0 +1,806 @@
++@@ -0,0 +1,817 @@
 ++/dts-v1/;
 ++
 ++#include <dt-bindings/input/linux-event-codes.h>
@@ -1563,6 +1527,17 @@ index 000000000..58a240cf4
 ++			label = "sys";
 ++			gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
 ++			linux,default-trigger = "heartbeat";
+++		};
+++	};
+++
+++	gpio-keys {
+++		compatible = "gpio-keys-polled";
+++		poll-interval = <100>;
+++
+++		power-button {
+++			label = "power";
+++			linux,code = <KEY_POWER>;
+++			gpios = <&gpio2 RK_PA4 GPIO_ACTIVE_LOW>;
 ++		};
 ++	};
 ++
@@ -2333,10 +2308,10 @@ index 000000000..58a240cf4
 ++};
 ++
 +diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-+index 8f3783742..8a38f85ba 100644
++index 5b15d0294..006d01af7 100644
 +--- a/drivers/gpu/drm/panel/Kconfig
 ++++ b/drivers/gpu/drm/panel/Kconfig
-+@@ -884,4 +884,13 @@ config DRM_PANEL_XINPENG_XPP055C272
++@@ -915,4 +915,13 @@ config DRM_PANEL_XINPENG_XPP055C272
 + 	  Say Y here if you want to enable support for the Xinpeng
 + 	  XPP055C272 controller for 720x1280 LCD panels with MIPI/RGB/SPI
 + 	  system interfaces.
@@ -2351,10 +2326,10 @@ index 000000000..58a240cf4
 ++	  panel as found in TIANNUO TN3399_V3.
 + endmenu
 +diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-+index d94a644d0..d36322dc0 100644
++index f156d7fa0..072c4fa40 100644
 +--- a/drivers/gpu/drm/panel/Makefile
 ++++ b/drivers/gpu/drm/panel/Makefile
-+@@ -90,3 +90,4 @@ obj-$(CONFIG_DRM_PANEL_VISIONOX_VTDR6130) += panel-visionox-vtdr6130.o
++@@ -93,3 +93,4 @@ obj-$(CONFIG_DRM_PANEL_VISIONOX_VTDR6130) += panel-visionox-vtdr6130.o
 + obj-$(CONFIG_DRM_PANEL_VISIONOX_R66451) += panel-visionox-r66451.o
 + obj-$(CONFIG_DRM_PANEL_WIDECHIPS_WS2401) += panel-widechips-ws2401.o
 + obj-$(CONFIG_DRM_PANEL_XINPENG_XPP055C272) += panel-xinpeng-xpp055c272.o
