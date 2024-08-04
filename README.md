@@ -14,17 +14,17 @@ PS：Batocera镜像只附带几个示例游戏ROM，需要玩家自己导入外�
 
 ## 如何编译
 
-编译非常耗时，亲测I9 13900HX也要好几个小时。会从外网下载大约18GiB的源码，且有时软件的来源会被删除导致下载会失败。编译完后整个工程目录占122GiB左右
-
-[这里](https://pan.baidu.com/s/1vD1iyD0hk2TpH0c3WGPV-w?pwd=elp1)有打包的所有源码，感兴趣的话可以自行下载编译。提取码为elp1
+[这里](https://pan.baidu.com/s/1vD1iyD0hk2TpH0c3WGPV-w?pwd=elp1)打包了编译过程中需要下载的源码，解压完大小在24GB
 
 官方提供了基于Dokcer的编译方法，方便在任何Linux发行版上编译，步骤如下
 
-### 解压源码
+### 下载源码
   
 ```
-tar zxvf batocera.linux.tar.gz -C ~/Desktop
-cat dl.tar.gz.* | tar zxv -C ~/Desktop/batocera.linux
+cd Desktop
+git clone -b 40 --recursive https://github.com/batocera-linux/batocera.linux.git
+# 将提供的额外源码解压，免去编译过程中再下载
+cat dl.tar.zst* | unzstd -T0 -c | tar -xv -C ~/Desktop/batocera.linux
 ```
 
 ### 打补丁
@@ -32,7 +32,7 @@ cat dl.tar.gz.* | tar zxv -C ~/Desktop/batocera.linux
 将patch复制到batocera.linux目录里，cd进入其中，打上补丁：
 
 ```
-patch -p1 < batocera-38-add-tn3399-v3.patch
+patch -p1 < batocera-40-add-tn3399-v3.patch
 ```
 
 ### 编译
