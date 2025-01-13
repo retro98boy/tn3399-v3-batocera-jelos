@@ -1059,10 +1059,10 @@ index 0000000000..3e1eecce89
 +};
 +
 diff --git a/board/batocera/rockchip/rk3399/linux-defconfig.config b/board/batocera/rockchip/rk3399/linux-defconfig.config
-index 79b3e5d575..a18b971b6a 100644
+index ad55083400..49f2486e5e 100644
 --- a/board/batocera/rockchip/rk3399/linux-defconfig.config
 +++ b/board/batocera/rockchip/rk3399/linux-defconfig.config
-@@ -4688,6 +4688,7 @@ CONFIG_DRM_PANEL_VISIONOX_RM69299=y
+@@ -4687,6 +4687,7 @@ CONFIG_DRM_PANEL_VISIONOX_RM69299=y
  # CONFIG_DRM_PANEL_VISIONOX_R66451 is not set
  CONFIG_DRM_PANEL_WIDECHIPS_WS2401=y
  CONFIG_DRM_PANEL_XINPENG_XPP055C272=y
@@ -1070,7 +1070,7 @@ index 79b3e5d575..a18b971b6a 100644
  # end of Display Panels
  
  CONFIG_DRM_BRIDGE=y
-@@ -5157,7 +5158,7 @@ CONFIG_SND_SOC_RT5514=y
+@@ -5156,7 +5157,7 @@ CONFIG_SND_SOC_RT5514=y
  CONFIG_SND_SOC_RT5514_SPI=y
  # CONFIG_SND_SOC_RT5616 is not set
  # CONFIG_SND_SOC_RT5631 is not set
@@ -1427,7 +1427,7 @@ index 0000000000..242af21952
 +exit 0
 diff --git a/board/batocera/rockchip/rk3399/tn3399-v3/genimage.cfg b/board/batocera/rockchip/rk3399/tn3399-v3/genimage.cfg
 new file mode 100644
-index 0000000000..3a7be43f03
+index 0000000000..e34bbcecd5
 --- /dev/null
 +++ b/board/batocera/rockchip/rk3399/tn3399-v3/genimage.cfg
 @@ -0,0 +1,47 @@
@@ -1445,7 +1445,7 @@ index 0000000000..3a7be43f03
 +		use-mke2fs = "true"
 +		extraargs = "-m 0"
 +	}
-+	size = "256M"
++	size = "512M"
 +	# include files from TARGET_DIR/userdata
 +	mountpoint = "/userdata"
 +}
@@ -1479,7 +1479,7 @@ index 0000000000..3a7be43f03
 +	}
 +}
 diff --git a/configs/batocera-rk3399.board b/configs/batocera-rk3399.board
-index ebf7208d23..8f4beeda6f 100644
+index 40bf8f5cc8..c3f63d2b72 100644
 --- a/configs/batocera-rk3399.board
 +++ b/configs/batocera-rk3399.board
 @@ -28,7 +28,7 @@ BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
@@ -2446,17 +2446,17 @@ index 0000000000..f93ba16189
 ++CONFIG_SPL_TINY_MEMSET=y
 ++CONFIG_ERRNO_STR=y
 diff --git a/package/batocera/core/batocera-system/Config.in b/package/batocera/core/batocera-system/Config.in
-index 9beab5e581..de8cb0fa09 100644
+index 50a18b112a..01c1cc8530 100644
 --- a/package/batocera/core/batocera-system/Config.in
 +++ b/package/batocera/core/batocera-system/Config.in
-@@ -491,7 +491,7 @@ config BR2_TARGET_BATOCERA_IMAGES_DEFINITIONS
+@@ -535,7 +535,7 @@ config BR2_TARGET_BATOCERA_IMAGES_DEFINITIONS
  													if BR2_PACKAGE_BATOCERA_TARGET_S922X
  	default "amlogic/s905/odroidc2 amlogic/s905/tvbox amlogic/s905/lepotato amlogic/s905/vim amlogic/s905/p201 amlogic/s905/lepotatov2 amlogic/s905/minix-neo-u1" \
  													if BR2_PACKAGE_BATOCERA_TARGET_S905
 -	default "rockchip/rk3399/orangepi-800 rockchip/rk3399/rg552 rockchip/rk3399/rockpro64 rockchip/rk3399/rock960 rockchip/rk3399/orangepi4-lts rockchip/rk3399/rock-pi-4 rockchip/rk3399/nanopi-m4v2 rockchip/rk3399/hugsun-x99" \
 +	default "rockchip/rk3399/orangepi-800 rockchip/rk3399/rg552 rockchip/rk3399/rockpro64 rockchip/rk3399/rock960 rockchip/rk3399/orangepi4-lts rockchip/rk3399/rock-pi-4 rockchip/rk3399/nanopi-m4v2 rockchip/rk3399/hugsun-x99 rockchip/rk3399/tn3399-v3" \
  													if BR2_PACKAGE_BATOCERA_TARGET_RK3399
- 	default "rockchip/rk3588/bananapi-m7 rockchip/rk3588/gameforce-ace rockchip/rk3588/rock-5c rockchip/rk3588/rock-5b rockchip/rk3588/rock-5a rockchip/rk3588/quartzpro64 rockchip/rk3588/orangepi-5 rockchip/rk3588/orangepi-5b rockchip/rk3588/orangepi-5-plus rockchip/rk3588/indiedroid-nova rockchip/rk3588/mekotronics-r58 rockchip/rk3588/khadas-edge-2 rockchip/rk3588/firefly-station-m3" \
+ 	default "rockchip/rk3588/nanopi-m6 rockchip/rk3588/orangepi-5-pro rockchip/rk3588/bananapi-m7 rockchip/rk3588/gameforce-ace rockchip/rk3588/rock-5c rockchip/rk3588/rock-5b rockchip/rk3588/rock-5a rockchip/rk3588/quartzpro64 rockchip/rk3588/orangepi-5 rockchip/rk3588/orangepi-5b rockchip/rk3588/orangepi-5-plus rockchip/rk3588/indiedroid-nova rockchip/rk3588/mekotronics-r58 rockchip/rk3588/khadas-edge-2 rockchip/rk3588/firefly-station-m3" \
  													if BR2_PACKAGE_BATOCERA_TARGET_RK3588
 diff --git a/package/batocera/firmwares/extralinuxfirmwares/001-add-link-for-tn3399-v3.patch b/package/batocera/firmwares/extralinuxfirmwares/001-add-link-for-tn3399-v3.patch
 new file mode 100644
