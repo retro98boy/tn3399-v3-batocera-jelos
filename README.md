@@ -1,3 +1,5 @@
+# 此仓库不再更新，移步[新仓库](https://github.com/retro98boy/batocera.linux)
+
 # 仓库作用
 
 为TN3399_V3移植Batocera和ROCKNIX，提供补丁让Batocera和ROCKNIX的源码能编译出TN3399_V3的镜像
